@@ -43,6 +43,7 @@
     const clicksetOption1 = api.parsefiledcode('click-setOption1__api_id__');
     const setOption3 = api.parsefiledcode('setOption3__api_id__');
     const setOption2 = api.parsefiledcode('#setOption2__api_id__');
+    const ecClickSetOptionAxisChart = [];
 
     require(['echarts'], function (echarts) {
         var option = {
@@ -82,7 +83,7 @@
         baseTop += height + gap;
 
         var chart = createChart(clicksetOption1, echarts, option, baseTop);
-        window.ecClickSetOptionAxisChart = chart;
+        ecClickSetOptionAxisChart.push(chart);
     });
 
     require(['echarts'], function (echarts) {
@@ -128,6 +129,8 @@
                 }]
             });
         });
+
+        ecClickSetOptionAxisChart.push(myChart);
     });
 
     require([
@@ -156,6 +159,7 @@
 
         var chart = echarts.init(elediv.querySelector(setOption2));
         chart.setOption(genOption());
+        ecClickSetOptionAxisChart.push(chart);
 
         setTimeout(function () {
             chart.dispatchAction({
@@ -174,5 +178,13 @@
             },10000)
         }, 100);
     });
+
+    api.destory = function () {
+        ecClickSetOptionAxisChart.forEach((chars) => {
+            chars.clear();
+            chars.dispose();
+        });
+        alert('ok delete');
+    }
 
 </script>

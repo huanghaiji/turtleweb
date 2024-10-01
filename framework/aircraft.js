@@ -58,6 +58,23 @@ function aircraftOnRemove(element, apiName) {
             v.remove()
         }
     })
+    //回收
+    Object.keys(window).forEach((key) => {
+        if (window[key]?.['vm'] && window[key]['vm']?.[apiName]) {
+            let cache = window[key].vm;
+            try {
+                cache[apiName]['destory']?.();
+            } catch (e) {
+                console.info(e);
+            } finally {
+                delete cache[apiName];
+                if (Object.keys(cache).length == 0) {
+                    delete window[key];
+                }
+            }
+        }
+    })
+    alert('执行回收完成');
 }
 
 function aircraftIsApiNameEmpty(element, apiName) {
@@ -212,14 +229,23 @@ function Aircraft(apiName, element) {
     }
     //初始化global全局变量；
     function initGlobalConfigre() {
-        return `
-                        console.info('-------------------------------------------------------')
-                        Object.keys(api.global).forEach((key) => {
-                            key!==api.id && (api.global[api.id].prototype.__proto__[key] = api.global[key]);
-                            //key!==api.id && (api.global.window[key] = api.global[key]);
-                            console.info(key,api.global);
-                        })
-                    `;
+        console.info('-------------------------------------------------------')
+        Object.keys(api.global).forEach((key) => {
+            //key !== api.id && (api.global[api.id].prototype.__proto__[key] = api.global[key]);
+            if (key !== api.id && key!=='window') {
+                let vmcache = api.global.window[key];
+                if (vmcache) {
+                    if (!vmcache?.vm?.[api.apiName]) {
+                        vmcache.vm[api.apiName] = api;
+                    }
+                } else {
+                    vmcache = api.global.window[key] = api.global[key];
+                    vmcache.vm = {};
+                    vmcache.vm[api.apiName] = api;
+                }
+            }
+            console.info(key, api.global);
+        })
     }
     //组合代码；
     function loaderjscode(mode, jsbody) {
@@ -233,7 +259,7 @@ function Aircraft(apiName, element) {
         if (mode === 'www') {
             jsUris.push(() => {
                 qurGet(jsbody, (contentjs) => {
-                    jsUris.codes.push(initGlobalConfigre());
+                    jsUris.codes.push('api.initGlobalConfigre();');
                     jsUris.codes.push(didReplacePath(contentjs, replacepath));
                     shiftNext();
                 }, (e) => {
@@ -249,7 +275,7 @@ function Aircraft(apiName, element) {
             });
         } else if (mode === 'local') {
             jsUris.push(() => {
-                jsUris.codes.push(initGlobalConfigre());
+                jsUris.codes.push('api.initGlobalConfigre()');
                 // jsUris.codes.push(didReplacePath(jsbody, replacepath));
                 jsUris.codes.push(jsbody);
                 shiftNext();
@@ -271,7 +297,7 @@ function Aircraft(apiName, element) {
                 let block = (codes.attributes?.['onjs']?.value);
                 if (block) {
                     element.removeAttribute('onjs');
-                    didFunction( element,block, paramsKey, paramsVaue);
+                    didFunction(element, block, paramsKey, paramsVaue);
                 }
             }
 
@@ -325,7 +351,7 @@ function Aircraft(apiName, element) {
                         newNode = codeNode.cloneNode();
                         newNode.setAttribute(aircraftApiName, apiName);
                         element.appendChild(newNode);
-                        didCodeNodes( newNode, codeNode, paramsKey, paramsVaue);
+                        didCodeNodes(newNode, codeNode, paramsKey, paramsVaue);
                     } else {
                         let noscriptId = codeNode.attributes['id'].value;
                         api['#' + noscriptId] = codeNode.textContent;
@@ -337,7 +363,7 @@ function Aircraft(apiName, element) {
                     let bi = textContent.indexOf('{{');
                     let ei = textContent.lastIndexOf('}}');
                     if (bi < ei && bi != -1 && ei != -1) {
-                        newNode.textContent = didFunctionContent(newNode.textContent, newNode, paramsKey, paramsVaue,'{{','}}');
+                        newNode.textContent = didFunctionContent(newNode.textContent, newNode, paramsKey, paramsVaue, '{{', '}}');
                     }
                 }
                 let cmd = codeControll.get(codes);
@@ -363,7 +389,7 @@ function Aircraft(apiName, element) {
         for (let i = 0, item;
             (item = arr[i]) != undefined; i++) {
             params[paramName] = item;
-            didCodeNodes( element, codeNode, paramsKey, buildParamsVlaue(), runCodesOffJsOpt)
+            didCodeNodes(element, codeNode, paramsKey, buildParamsVlaue(), runCodesOffJsOpt)
         }
 
         codeControll.set(codeNode, breakCode)
@@ -378,6 +404,7 @@ function Aircraft(apiName, element) {
     api.loadingAppend = loadingAppend;
     api.foreach = foreach;
     api.parsefiledcode = parsefiledcode;
+    api.initGlobalConfigre = initGlobalConfigre;
     return api;
 }
 

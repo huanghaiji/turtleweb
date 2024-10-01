@@ -37,6 +37,7 @@
 <div id="seatcontent">
 	<script mode='onjs'>
 		let el = this;
+		console.info(self,">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		self.loadingSeat = function() {
 			Aircraft('seats', el).didAppend(self, api['#seatlistcode'])
 		}
@@ -64,6 +65,7 @@
 		}
 		clearTimeout(showtimeid)
 		loadingDiv.innerHTML = '';
+        console.info(self, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		self.seats = JSON.parse(dataContent)
 		self.loadingSeat();
 		delete self.loadingSeat;
