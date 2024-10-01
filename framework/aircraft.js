@@ -27,32 +27,32 @@ function qurGet(url, success, error) {
 /**
  * 计算一个hashCode
  */
-function hashcodeValue(){
-	function simpleHash(input) {
-	    let hash = 0;
-	    if (input.length === 0) return hash;
-	    for (let i = 0; i < input.length; i++) {
-	        let char = input.charCodeAt(i);
-	        hash = (hash << 5) - hash + char;
-	        hash = hash & hash; // Convert to 32bit integer
-	    }
-	    return hash;
-	}
-	function generateUUID(timestamp,randomNum) {
-	    let uuid = (timestamp *10000_0000_0000_0000_0).toString(36) + randomNum.toString(36);
-	    return uuid;
-	}
-	// 使用函数
-	let timestamp = Date.now();
-	let randomNumber = Math.random();
-	let combinedString = timestamp+'' + randomNumber;
-	let uuid = generateUUID(timestamp,randomNumber);
-	let hashValue = (uuid+randomNumber+timestamp+Math.abs(simpleHash(combinedString))).replaceAll(".","_").toString(16);
-	return hashValue;
+function hashcodeValue() {
+    function simpleHash(input) {
+        let hash = 0;
+        if (input.length === 0) return hash;
+        for (let i = 0; i < input.length; i++) {
+            let char = input.charCodeAt(i);
+            hash = (hash << 5) - hash + char;
+            hash = hash & hash; // Convert to 32bit integer
+        }
+        return hash;
+    }
+    function generateUUID(timestamp, randomNum) {
+        let uuid = (timestamp * 10000_0000_0000_0000_0).toString(36) + randomNum.toString(36);
+        return uuid;
+    }
+    // 使用函数
+    let timestamp = Date.now();
+    let randomNumber = Math.random();
+    let combinedString = timestamp + '' + randomNumber;
+    let uuid = generateUUID(timestamp, randomNumber);
+    let hashValue = (uuid + randomNumber + timestamp + Math.abs(simpleHash(combinedString))).replaceAll(".", "_").toString(16);
+    return hashValue;
 }
 
 function aircraftOnRemove(element, apiName) {
-    let lit = (element||document).querySelectorAll('[aircraftApiName]');
+    let lit = (element || document).querySelectorAll('[aircraftApiName]');
     lit.forEach((v) => {
         if (v['attributes']['aircraftApiName']['value'] == apiName) {
             v.remove()
@@ -74,29 +74,15 @@ function aircraftIsApiNameEmpty(element, apiName) {
 function Aircraft(apiName, element) {
     let api = {
         apiName: apiName,
-        id: hashcodeValue()
+        id: hashcodeValue(),
+        global: undefined
     };
     let params = {};
     let jsUris = [];
     let docmap = new Map();
     let codeControll = new Map();
     let replacepath = '';
-	function d(nodeRecords){
-		nodeRecords.forEach((nodeRecord)=>{
-			let node =nodeRecord.target;
-			console.info(apiName,node.getAttribute(aircraftApiName),node);
-			// if(node.getAttribute(aircraftApiName) === apiName){
-			// 	node.childNodes.forEach((childNone)=>{
-			// 		childNone['getAttribute'] &&
-			// 		 childNone.setAttribute(aircraftApiName,apiName);
-			// 	})
-			// }
-		});
-	}
-	const observer = new MutationObserver((nodeRecords)=>{
-		d(nodeRecords)
-	});
-	
+
     const breakCode = 'breakCode';
     const runCodesOffJsOpt = 'runCodesOffJs';
     const aircraftApiName = 'aircraftApiName';
@@ -104,12 +90,11 @@ function Aircraft(apiName, element) {
         onjsclick: 'onclick'
     };
     const attributes = {
-        onjsid: 'id'
+        jsid: 'id'
     };
 
-	observer.observe(element,{childList:true});
-	jsUris.codes=[]
-	
+    jsUris.codes = []
+
     function buildParamsKey() {
         return Object.keys(params).join(',')
     }
@@ -139,13 +124,14 @@ function Aircraft(apiName, element) {
         } else {
             div = codes;
         }
-        didCodeNodes(global, element, div);
+        api.global = global == window ? {}: global;
+        didCodeNodes(element, div);
         docmap.clear();
         codeControll.clear();
         params = {};
     }
 
-    function didFunction(element, block, global, paramsKey, paramsVaue, useResult, _arguments_) {
+    function didFunction(element, block, paramsKey, paramsVaue, useResult, _arguments_) {
         if (paramsKey) {
             let f = new Function(
                 `return function(
@@ -154,11 +140,12 @@ function Aircraft(apiName, element) {
 					global,
 					${paramsKey}
 					){
+                        const window = self = api.global;
 						${useResult ? 'return ' : ''}${block}
 					}`
             )()
-            return _arguments_ ? f.call(element, _arguments_, api, global, ...paramsVaue) :
-                f.call(element, api, global, ...paramsVaue);
+            return _arguments_ ? f.call(element, _arguments_, api, api.global, ...paramsVaue) :
+                f.call(element, api, api.global, ...paramsVaue);
         } else {
             let f = new Function(
                 `return function(
@@ -166,22 +153,29 @@ function Aircraft(apiName, element) {
 						api,
 						global
 						){
+                            const window = self = api.global;
 							${useResult ? 'return ' : ''}${block}
 						}`
             )()
-            return _arguments_ ? f.call(element, _arguments_, api, global) :
-                f.call(element, api, global);
+            return _arguments_ ? f.call(element, _arguments_, api, api.global) :
+                f.call(element, api, api.global);
         }
     }
 
-    function didFunctionContent(textContent, element, global, paramsKey, paramsVaue, objStartStr, objEndStr) {
-        objStartStr = objStartStr || '{{';
-        objEndStr = objEndStr || '}}';
+    function didFunctionContent(textContent, element, paramsKey, paramsVaue, objStartStr, objEndStr, fieldsymbols) {
         let bi = textContent.indexOf(objStartStr);
         let ei = textContent.lastIndexOf(objEndStr);
         if (bi < ei && bi != -1 && ei != -1) {
+            let block = textContent.substring(bi + objStartStr.length, ei);
+            if (fieldsymbols) {
+                block = block.replaceAll(fieldsymbols, '.');
+            }
             return textContent.substring(0, bi) +
-                didFunction(element, textContent.substring(bi + objStartStr.length, ei), global, paramsKey, paramsVaue, true) +
+                didFunction(element,
+                    block,
+                    paramsKey,
+                    paramsVaue,
+                    true) +
                 textContent.substring(ei + objEndStr.length);
         }
     }
@@ -195,27 +189,48 @@ function Aircraft(apiName, element) {
         })
     }
 
+    //编译解释执行代码；
     function shiftNext() {
         jsUris.shift();
-		if(jsUris.length!=0){
-			jsUris[0]();
-			return
-		}
-		new Function('api',jsUris.codes.join(';'))(api);
+        if (jsUris.length != 0) {
+            jsUris[0]();
+            return;
+        }
+        didFunction(element,
+            globalScriptExcel(),
+            undefined,
+            undefined,
+            false);
     }
-	
-    function loaderjscode(element,mode,jsbody) {
-		if(mode==='local'){
-			let exist=filterToolInserJscodes.find((value)=>{return jsbody.indexOf(value)!=-1})
-			if(exist){
-				return
-			}
-		}
+    //执行代码；
+    function globalScriptExcel() {
+        return `(api.global[api.id]=function(){${jsUris.codes.join(';')};})();
+             (delete api.global[api.id]);`
+    }
+    //初始化global全局变量；
+    function initGlobalConfigre() {
+        return `
+                        console.info('-------------------------------------------------------')
+                        Object.keys(api.global).forEach((key) => {
+                            key!==api.id && (api.global[api.id].prototype.__proto__[key] = api.global[key]);
+                            console.info(key,api.global);
+                        })
+                    `;
+    }
+    //组合代码；
+    function loaderjscode(mode, jsbody) {
+        if (mode === 'local') {
+            let exist = filterToolInserJscodes.find((value) => { return jsbody.indexOf(value) != -1 })
+            if (exist) {
+                return
+            }
+        }
         let empty = jsUris.length == 0;
         if (mode === 'www') {
             jsUris.push(() => {
                 qurGet(jsbody, (contentjs) => {
-					jsUris.codes.push(didReplacePath(contentjs, replacepath));
+                    jsUris.codes.push(initGlobalConfigre());
+                    jsUris.codes.push(didReplacePath(contentjs, replacepath));
                     shiftNext();
                 }, (e) => {
                     let jsurif = jsUris[0];
@@ -230,17 +245,18 @@ function Aircraft(apiName, element) {
             });
         } else if (mode === 'local') {
             jsUris.push(() => {
-				jsUris.codes.push(didReplacePath(jsbody,replacepath));
+                jsUris.codes.push(initGlobalConfigre());
+                jsUris.codes.push(didReplacePath(jsbody, replacepath));
                 shiftNext();
             });
         }
         empty && (jsUris[0]?.());
     }
-	
+
     /**
      * 引擎层面应用格式为: <dom onjs=''/>
      */
-    function didCodeNodes(global, element, codes, paramsKey, paramsVaue, opt) {
+    function didCodeNodes(element, codes, paramsKey, paramsVaue, opt) {
         docmap.set(element, codes);
 
         if (codes) {
@@ -250,7 +266,7 @@ function Aircraft(apiName, element) {
                 let block = (codes.attributes?.['onjs']?.value);
                 if (block) {
                     element.removeAttribute('onjs');
-                    didFunction(element, block, global, paramsKey, paramsVaue);
+                    didFunction( element,block, paramsKey, paramsVaue);
                 }
             }
 
@@ -260,15 +276,15 @@ function Aircraft(apiName, element) {
                     if (block) {
                         element.removeAttribute(key);
                         element[events[key]] = function () {
-                            didFunction(element, block, global, paramsKey, paramsVaue, false, arguments);
+                            didFunction(element, block, paramsKey, paramsVaue, false, arguments);
                         }
                     }
                 })
                 Object.keys(attributes).forEach((key) => {
-                    let block = (codes.attributes?.[key]?.value);
-                    if (block) {
-                        element.removeAttribute(key);
-                        element.setAttribute(attributes[key], didFunctionContent(block, element, global, paramsKey, paramsVaue,'$','$'))
+                    if (element.attributes[key]) {
+                        let dkey = attributes[key];
+                        let block = (codes.attributes?.[dkey]?.value);
+                        block && element.setAttribute(dkey, didFunctionContent(block, element, paramsKey, paramsVaue, '__', '__', '_'));
                     }
                 });
             }
@@ -277,12 +293,12 @@ function Aircraft(apiName, element) {
                 let name = codeNode.nodeName;
                 if (name === 'SCRIPT') {
                     if (codeNode.src) {
-                        loaderjscode(element, 'www', codeNode.src);
+                        loaderjscode('www', codeNode.src);
                         continue;
                     }
                     if (codeNode.attributes['mode']?.value == 'onjs') {
                         block = codeNode.textContent;
-                        didFunction(element, block, global, paramsKey, paramsVaue);
+                        didFunction(element, block, paramsKey, paramsVaue);
                         continue;
                     }
                     if (codeNode.attributes['mode']?.value == 'on') {
@@ -295,7 +311,7 @@ function Aircraft(apiName, element) {
                     if (codeNode.attributes['mode']?.value == 'gone') {
                         continue;
                     }
-                    loaderjscode(element, 'local', codeNode.textContent);
+                    loaderjscode('local', codeNode.textContent);
                     continue;
                 }
                 let tagName = codeNode.tagName;
@@ -304,7 +320,7 @@ function Aircraft(apiName, element) {
                         newNode = codeNode.cloneNode();
                         newNode.setAttribute(aircraftApiName, apiName);
                         element.appendChild(newNode);
-                        didCodeNodes(global, newNode, codeNode, paramsKey, paramsVaue);
+                        didCodeNodes( newNode, codeNode, paramsKey, paramsVaue);
                     } else {
                         let noscriptId = codeNode.attributes['id'].value;
                         api['#' + noscriptId] = codeNode.textContent;
@@ -316,7 +332,7 @@ function Aircraft(apiName, element) {
                     let bi = textContent.indexOf('{{');
                     let ei = textContent.lastIndexOf('}}');
                     if (bi < ei && bi != -1 && ei != -1) {
-                        newNode.textContent = didFunctionContent(newNode.textContent, newNode, global, paramsKey, paramsVaue);
+                        newNode.textContent = didFunctionContent(newNode.textContent, newNode, paramsKey, paramsVaue,'{{','}}');
                     }
                 }
                 let cmd = codeControll.get(codes);
@@ -329,10 +345,6 @@ function Aircraft(apiName, element) {
 
         codeControll.delete(codes);
         docmap.delete(element, codes);
-		// if(!element.isObserver){
-		// 	element.isObserver=true;
-		// 	observer.observe(element,{childList:true});
-		// }
     }
 
     /**
@@ -346,18 +358,23 @@ function Aircraft(apiName, element) {
         for (let i = 0, item;
             (item = arr[i]) != undefined; i++) {
             params[paramName] = item;
-            didCodeNodes(global, element, codeNode, paramsKey, buildParamsVlaue(), runCodesOffJsOpt)
+            didCodeNodes( element, codeNode, paramsKey, buildParamsVlaue(), runCodesOffJsOpt)
         }
 
         codeControll.set(codeNode, breakCode)
         delete params[paramName]
     }
 
+    function parsefiledcode(code) {
+        return didFunctionContent(code, element, 'api,global', [api, api.global], '__', '__', '_');
+    }
+
     api.didAppend = didAppend;
     api.loadingAppend = loadingAppend;
     api.foreach = foreach;
+    api.parsefiledcode = parsefiledcode;
     return api;
 }
 
 
-const filterToolInserJscodes= ['livereload.js?','class reloadPlugin']
+const filterToolInserJscodes = ['livereload.js?', 'class reloadPlugin']

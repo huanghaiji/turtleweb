@@ -20,27 +20,29 @@
 </style>
 
 <script type="text/javascript" mode="gone">
-
-    const api = { id: Date.now().toString(36) };
-
+    const api = {
+        id: Date.now().toString(36),
+        parsefiledcode: (code) => {
+            return code;
+        }
+    };
 </script>
 
-<div class="tianqidiv" onjsid="$api.id$">
+<div class="tianqidiv" id="__api_id__" jsid>
     <h1>triggerOn: click, setOption when trigger axis (keep show)</h1>
-    <div class="chart" onjsid="click-setOption1$api.id$"></div>
+    <div class="chart" id="click-setOption1__api_id__" jsid></div>
     <h1>tooltip should auto show and auto disappear when setOption(..., {notMerge: true})</h1>
-    <div class="chart" onjsid="setOption2$api.id$"></div>
-    <div class="chart" onjsid="setOption3$api.id$" style="height: 550px"></div>
+    <div class="chart" id="setOption2__api_id__" jsid></div>
+    <div class="chart" id="setOption3__api_id__" style="height: 550px" jsid></div>
 </div>
 
 
 <script>
     let pid = api.id;
-    const elediv = document.querySelector('#' + api.id);
-    const clicksetOption1 = 'click-setOption1' + api.id;
-    const setOption3 = 'setOption3' + api.id;
-    const setOption2 = '#setOption2' + api.id;
-
+    const elediv = document.querySelector( api.parsefiledcode('#__api_id__'));
+    const clicksetOption1 = api.parsefiledcode('click-setOption1__api_id__');
+    const setOption3 = api.parsefiledcode('setOption3__api_id__');
+    const setOption2 = api.parsefiledcode('#setOption2__api_id__');
 
     require(['echarts'], function (echarts) {
         var option = {
@@ -127,7 +129,6 @@
             });
         });
     });
-
 
     require([
         'echarts'
