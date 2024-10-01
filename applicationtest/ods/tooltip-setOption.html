@@ -21,6 +21,7 @@
 
 <script type="text/javascript" mode="gone">
     const api = {
+        apiName:'',
         id: Date.now().toString(36),
         parsefiledcode: (code) => {
             return code;
@@ -184,7 +185,8 @@
             chars.clear();
             chars.dispose();
         });
-        alert('ok delete');
+        console.info("ddd>>>>>>>>>>>>",ecClickSetOptionAxisChart.length,api.apiName)
+        ecClickSetOptionAxisChart.length=0
     }
 
 </script>

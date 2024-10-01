@@ -59,21 +59,21 @@ function aircraftOnRemove(element, apiName) {
         }
     })
     //回收
+    let api = undefined;
     Object.keys(window).forEach((key) => {
-        if (window[key]?.['vm'] && window[key]['vm']?.[apiName]) {
-            let cache = window[key].vm;
-            try {
-                cache[apiName]['destory']?.();
-            } catch (e) {
-                console.info(e);
-            } finally {
-                delete cache[apiName];
-                if (Object.keys(cache).length == 0) {
+        if (key.startsWith("__")) {
+            let handlers = window[ key]?.handlers;
+            if (handlers) {
+                api = handlers[apiName].api;
+                delete handlers[apiName];
+                if (Object.keys(handlers).length == 0) {
                     delete window[key];
+                    delete window[key.substring(2)]
                 }
             }
         }
     })
+    api?.['destory']?.();
 }
 
 function aircraftIsApiNameEmpty(element, apiName) {
@@ -208,6 +208,40 @@ function Aircraft(apiName, element) {
         })
     }
 
+    function proxy(target, key, api) {
+        if (target['__' + key] && target['__' + key].handlers[api.apiName]) {
+            return;
+        }
+        if (!target[key]) {
+            let handler = {
+                get: (targetp, prop) => {
+                    let keys = Object.keys(handlers);
+                    let hk = keys.find((kn) => { return handlers[kn].is() })
+                    return hk ? handlers[hk].get(targetp, prop): target[prop];
+                }
+            }
+            target['__' + key] = { handlers: {} };
+            //------------------
+            //api.global[key].toString()，NOT；
+            //
+            target[key] = new Proxy(api.global[key], handler);
+        }
+
+        let handlers = target['__'+key].handlers;
+        let targetp = api.global[key];
+        let sl = this;
+        let handler = {
+            is: () => {
+                return new Function('handler','return this == handler.api').call(sl, handler);
+            },
+            get: (_o, prop) => {
+                return targetp[prop];
+            }
+        }
+        handler.api = api;
+        handlers[api.apiName] = handler;
+    }
+
     //编译解释执行代码；
     function shiftNext() {
         jsUris.shift();
@@ -228,20 +262,9 @@ function Aircraft(apiName, element) {
     }
     //初始化global全局变量；
     function initGlobalConfigre() {
-        console.info('-------------------------------------------------------')
         Object.keys(api.global).forEach((key) => {
-            //key !== api.id && (api.global[api.id].prototype.__proto__[key] = api.global[key]);
-            if (key !== api.id && key!=='window') {
-                let vmcache = api.global.window[key];
-                if (vmcache) {
-                    if (!vmcache?.vm?.[api.apiName]) {
-                        vmcache.vm[api.apiName] = api;
-                    }
-                } else {
-                    vmcache = api.global.window[key] = api.global[key];
-                    vmcache.vm = {};
-                    vmcache.vm[api.apiName] = api;
-                }
+            if (key !== api.id && key !== 'window') {
+                proxy.call(api,api.global.window, key,api);
             }
             console.info(key, api.global);
         })
@@ -275,7 +298,6 @@ function Aircraft(apiName, element) {
         } else if (mode === 'local') {
             jsUris.push(() => {
                 jsUris.codes.push('api.initGlobalConfigre()');
-                // jsUris.codes.push(didReplacePath(jsbody, replacepath));
                 jsUris.codes.push(jsbody);
                 shiftNext();
             });
