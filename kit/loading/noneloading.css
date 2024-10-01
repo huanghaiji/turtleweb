@@ -1,0 +1,38 @@
+.noneloading {
+	width: var(--w);
+	height: var(--h);
+	position: relative;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	filter: contrast(15);
+	margin: 0px;
+	padding: 0px;
+}
+
+.noneloading span {
+	position: absolute;
+	left: 0;
+	transform-origin: 250% center;
+	width: 20%;
+	height: 20%;
+	background-color: var(--color, #2b2b2b);
+	border-radius: 50%;
+	animation: noneloadingshow 3s infinite;
+	filter: blur(1px);
+}
+
+@keyframes noneloadingshow {
+	0% {
+		transform: rotate(0deg) translateX(200%);
+	}
+
+	50%,
+	100% {
+		transform: rotate(calc(360deg / 8 * var(--i)));
+	}
+
+	100% {
+		transform: rotate(360deg) translateX(200%);
+	}
+}

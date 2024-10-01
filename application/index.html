@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>龟龟管理器HTML练习</title>
+		<link rel="stylesheet" href="./../kit/loading/noneloading.css" />
+		<link rel="stylesheet" href="nav/nva01.css" />
+		<link rel="stylesheet" href="entry/index.css" />
+		<script type="text/javascript" src="./../framework/aircraft.js"></script>
+		<script type="text/javascript" src="./../framework/apimap.js"></script>
+		<script type="text/javascript" src="./../kit/loading/noneloading.js"></script>
+	</head>
+	<body>
+		<div class="theme-content main_pancel"></div>
+
+		<div id='app' class="main_pancel" style="overflow: auto;">
+
+			<div class="main_top_bg">
+				<div class="wrapper">
+					<nav>
+						<input type="radio" name="tab" id="home" checked>
+						<input type="radio" name="tab" id="comment">
+						<input type="radio" name="tab" id="envelope">
+						<input type="radio" name="tab" id="heart">
+						<input type="radio" name="tab" id="user">
+						<label for="home" class="home" onclick="nickOnClick()">
+							<a><i class="fa fa-home" aria-hidden="true"></i>1.我的工号</a>
+						</label>
+						<label for="comment" class="comment" onclick="clickTheme()">
+							<a><i class="fa fa-comment" aria-hidden="true"></i>2.主题</a>
+						</label>
+						<label for="envelope" class="envelope">
+							<a><i class="fa fa-envelope" aria-hidden="true"></i>3.退出</a>
+						</label>
+						<label for="heart" class="heart">
+							<a><i class="fa fa-heart" aria-hidden="true"></i></a>
+						</label>
+						<label for="user" class="user">
+							<a><i class="fa fa-user" aria-hidden="true"></i></a>
+						</label>
+						<div class="tab"></div>
+					</nav>
+				</div>
+			</div>
+
+			<div id="main_item" style="width: 100%;" onjs="api.foreach(this,global,desktop.menuOrder,'key')">
+				<div class="main_item_pancel" onjs="this.onclick=()=>{itemOnClick(this,key)}">
+					<div class="main_item_bg">
+						<div class="main_item_left">
+							<div onjs="this.classList.add(key)"></div>
+							{{desktop.menuItem[key].title}}
+							<button onjs="this.classList.add(key+'btn');"
+									onjsclick="itemCloseClick(this,key,...arguments)">关闭</button>
+						</div>
+						<div class="main_item_bg_notify">
+							8:00 22℃ 80%
+							<br>
+							9:00 23℃ 70%
+						</div>
+						<img class="main_item_right_img" onjs='this.src=desktop.menuItem[key].icon' />
+					</div>
+					<div class="main_item_login">
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+	</body>
+</html>
+
+
+<script type="text/javascript" src="js/desktop.js"></script>
+
+<script type="text/javascript">
+	function clickTheme() {
+		let a = document.querySelector('.theme-content')
+		if (aircraftIsApiNameEmpty(a, 'app')) {
+			Aircraft('app', a).loadingAppend(self, './theme/theme.html').catch((error) => {
+				alert(JSON.stringify(error))
+			})
+		} else {
+			aircraftOnRemove(a, 'app')
+		}
+	}
+
+	(function() {
+		Aircraft(
+				'main_item',
+				document.querySelector('#main_item'))
+			.didAppend(self, document.querySelector('#main_item').cloneNode(true));
+	})()
+
+	let loginI = -1;
+	let loginUri = ['./login2/movelogin.html']
+
+	function itemOnClick(element, key) {
+		if (key) {
+			let title = desktop.menuItem[key].title;
+            let map = {
+                '吃饭': './seat/seatlist.html',
+                '天气': './../applicationtest/ods/tooltip-setOption.html',
+                '重量': './../applicationtest/ods/tooltip-setOption.html'
+            };
+			if (map[title]) {
+				let itemBodyElement = element;//.querySelector('.main_item_login');	
+				if (aircraftIsApiNameEmpty(itemBodyElement, key)) {
+					Aircraft(key, itemBodyElement).loadingAppend(self, map[title])
+					.then(()=>{
+						element.querySelector(`.${key}btn`).style.visibility='visible';
+					})
+					.catch((error) => {
+						alert(JSON.stringify(error));
+					})
+				}
+				return;
+			}
+		}
+		let loginElement = element.querySelector('.main_item_login');
+		element = loginElement || element;
+		if (element.querySelector('[aircraftapiname]')) {
+			return
+		}
+		loginI++;
+		loginUri.length <= loginI && (loginI = 0);
+		let loguri = loginUri[loginI]
+		element.style.minHeight = '0px';
+		Aircraft('item_login', element).loadingAppend(self, loguri).then(() => {
+			element.style.minHeight = element.scrollHeight + 'px';
+			element.style.minHeight = '0px';
+		}).catch((error) => {
+			alert(JSON.stringify(error));
+		})
+
+	}
+
+	function nickOnClick() {
+		let element = document.body.querySelector('.main_top_bg');
+		itemOnClick(element, '');
+	}
+
+	function itemCloseClick(element, key,event) {
+		aircraftOnRemove(document.body, key);
+		element.style.visibility = 'collapse';
+		event.stopPropagation();
+	}
+</script>

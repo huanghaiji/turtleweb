@@ -1,0 +1,75 @@
+<style type="text/css">
+	#seatcontent {
+		transition: ease-in-out 1s;
+	}
+
+	.seatlist-item {
+		background-color: rgb(230, 237, 249);
+		margin: 0.25rem 1px;
+		padding: 1rem 1rem;
+		width: calc(100% - 2rem - 2px);
+	}
+
+	.seatlist-item span {
+		width: 24%;
+		color: #3b3b3b;
+		display: inline-block;
+		text-align:center;
+	}
+
+	.seatlist-item span:first-child , .seatlist-item span:last-child{
+		text-align:left;
+	}
+   
+</style>
+
+<noscript id="seatlistcode">
+	<div id="seatlist" onjs="api['_index']=0;api.foreach(this,global,self.seats,'seatObj')">
+		<div class="seatlist-item" onjs="(api['_index']++)%2!=0 && (this.style.backgroundColor='transparent')">
+			<span>{{seatObj.date}}</span>
+			<span>{{seatObj.num}}</span>
+			<span>{{seatObj.quality}}</span>
+			<span>{{seatObj.packing}}</span>
+		</div>
+	</div>
+</noscript>
+
+<div id="seatcontent">
+	<script mode='onjs'>
+		let el = this;
+		self.loadingSeat = function() {
+			Aircraft('seats', el).didAppend(self, api['#seatlistcode'])
+		}
+	</script>
+</div>
+
+<script type="text/javascript" mode='on'>
+	let seatContentDiv = document.body.querySelector('#seatcontent');
+
+	seatContentDiv.style.height = '0px';
+	seatContentDiv.addEventListener('transitionend', () => {
+		seatContentDiv.style.height = 'auto'
+	});
+
+	let loadingDiv = document.querySelector('.chifan')
+	let showtimeid=setTimeout(()=>{
+		loadingPlay(loadingDiv, loadingDiv.scrollHeight + 'px')
+	},1000);
+	qurGet('./../../applicationDatas/seats/seatdata.json', (dataContent) => {
+		if (!dataContent) {
+			aircraftOnRemove(document.body, 'seatlistItem')
+			alert('数据不存在')
+			loadingDiv.innerHTML = '';
+			return;
+		}
+		clearTimeout(showtimeid)
+		loadingDiv.innerHTML = '';
+		self.seats = JSON.parse(dataContent)
+		self.loadingSeat();
+		delete self.loadingSeat;
+		seatContentDiv.style.height = seatContentDiv.scrollHeight + 'px';
+		//document.querySelector('.chifanbtn').style.visibility='visible';
+	}, (err) => {
+		alert(JSON.stringify(err))
+	})
+</script>

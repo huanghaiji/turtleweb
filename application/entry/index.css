@@ -1,0 +1,110 @@
+html {
+	width: 100%;
+	height: 100%;
+	margin: 0%;
+	padding: 0%;
+}
+
+body {
+	background-color: rgb(230, 237, 249);
+	width: 100%;
+	height: 100%;
+	margin: 0%;
+	padding: 0%;
+	position: absolute;
+}
+
+.main_pancel{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+.main_top_bg {
+	background-color: rgb(200, 207, 219);
+}
+
+.main_top_bg ul,ol{
+	margin: 0;
+	padding: 1rem 0;
+	width: 100%;
+}
+
+.main_top_bg li{
+	display: inline;
+	padding: 1rem;
+	font-size: 1rem;
+	font-weight: bold;
+}
+
+
+.main_item_pancel {
+	width: 90%;
+	max-width: 900px;
+	margin: 0rem auto;
+	border-radius: 1rem;
+	background-color: white;
+	margin-top: 2rem;
+	margin-bottom: 2rem;
+	overflow: hidden;
+}
+
+.main_item_bg {
+	min-height: 190px;
+	position: relative;
+	margin: 0rem auto;
+	clear: both;
+}
+
+.main_item_left {
+	/* width: 40%; */
+	width: calc(100% - 2rem);
+	display: flex;
+	font-size: 2rem;
+	padding: 1rem;
+	font-weight: bold;
+	position: absolute;
+}
+
+.main_item_left button{
+	visibility: collapse;
+	position: absolute;
+	right: 1rem;
+	top:1.5rem;
+	font-size: 1rem;
+	z-index: 1;
+}
+
+.main_item_right_img {
+	min-width: 30%;
+	max-width: 45%;
+	width: 40%;
+	position: absolute;
+	bottom: 5%;
+	right: 5%;
+}
+
+.main_item_bg_notify{
+	position: absolute;
+	top: 4rem;
+	left: 1rem;
+	font-size: 1rem;
+	border-radius: 5px;
+	background-color: #ddd;
+	padding: 0.1125rem;
+	padding-left: 1.5rem;
+	padding-right: 0.5rem;
+}
+
+.btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  text-align: center;
+  font-size: 16px;
+  cursor: pointer;
+}
+.btn:hover {
+  background-color: #3e8e41;
+}

@@ -1,0 +1,15 @@
+
+<link rel="stylesheet" href="./../kit/loading/noneloading.css"/>
+
+<body>
+	
+</body>
+
+<script type="text/javascript" src="./../kit/loading/noneloading.js"></script>
+<script type="text/javascript">
+	loadingPlay(document.body,'100px').then((element)=>{
+		setTimeout(()=>{
+			element.innerHTML=''
+		},10000)
+	})
+</script>
