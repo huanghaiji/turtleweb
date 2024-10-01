@@ -74,7 +74,6 @@ function aircraftOnRemove(element, apiName) {
             }
         }
     })
-    alert('执行回收完成');
 }
 
 function aircraftIsApiNameEmpty(element, apiName) {
