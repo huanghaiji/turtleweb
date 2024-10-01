@@ -124,7 +124,8 @@ function Aircraft(apiName, element) {
         } else {
             div = codes;
         }
-        api.global = global == window ? {}: global;
+        api.global = global == window ? {} : global;
+        global.window = window;
         didCodeNodes(element, div);
         docmap.clear();
         codeControll.clear();
@@ -140,7 +141,8 @@ function Aircraft(apiName, element) {
 					global,
 					${paramsKey}
 					){
-                        const window = self = api.global;
+                        const window = api.global;
+                        const self = api.global;
 						${useResult ? 'return ' : ''}${block}
 					}`
             )()
@@ -153,7 +155,8 @@ function Aircraft(apiName, element) {
 						api,
 						global
 						){
-                            const window = self = api.global;
+                            const window = api.global;
+                             const self = api.global;
 							${useResult ? 'return ' : ''}${block}
 						}`
             )()
@@ -205,7 +208,7 @@ function Aircraft(apiName, element) {
     //执行代码；
     function globalScriptExcel() {
         return `(api.global[api.id]=function(){${jsUris.codes.join(';')};})();
-             (delete api.global[api.id]);`
+                    (delete api.global[api.id]);`;
     }
     //初始化global全局变量；
     function initGlobalConfigre() {
@@ -213,6 +216,7 @@ function Aircraft(apiName, element) {
                         console.info('-------------------------------------------------------')
                         Object.keys(api.global).forEach((key) => {
                             key!==api.id && (api.global[api.id].prototype.__proto__[key] = api.global[key]);
+                            //key!==api.id && (api.global.window[key] = api.global[key]);
                             console.info(key,api.global);
                         })
                     `;
@@ -246,7 +250,8 @@ function Aircraft(apiName, element) {
         } else if (mode === 'local') {
             jsUris.push(() => {
                 jsUris.codes.push(initGlobalConfigre());
-                jsUris.codes.push(didReplacePath(jsbody, replacepath));
+                // jsUris.codes.push(didReplacePath(jsbody, replacepath));
+                jsUris.codes.push(jsbody);
                 shiftNext();
             });
         }

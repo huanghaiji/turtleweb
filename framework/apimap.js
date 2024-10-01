@@ -3,7 +3,8 @@
 const headerCodes= [
 	`
 		const selfApi= this;
-		const window=self=this.global;
+		const window = selfApi.global;
+		const self = selfApi.global;
 		function selfApiCreateElement(tag){
 			let doc = document.createElement(tag);
 			doc.setAttribute('aircraftApiName',selfApi.apiName);

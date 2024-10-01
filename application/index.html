@@ -75,10 +75,13 @@
 <script type="text/javascript" src="js/desktop.js"></script>
 
 <script type="text/javascript">
+	const pagemax = { page: {} }
+	const page = pagemax.page;
+
 	function clickTheme() {
 		let a = document.querySelector('.theme-content')
 		if (aircraftIsApiNameEmpty(a, 'app')) {
-			Aircraft('app', a).loadingAppend(self, './theme/theme.html').catch((error) => {
+			Aircraft('app', a).loadingAppend(page, './theme/theme.html').catch((error) => {
 				alert(JSON.stringify(error))
 			})
 		} else {
@@ -90,7 +93,7 @@
 		Aircraft(
 				'main_item',
 				document.querySelector('#main_item'))
-			.didAppend(self, document.querySelector('#main_item').cloneNode(true));
+			.didAppend(page, document.querySelector('#main_item').cloneNode(true));
 	})()
 
 	let loginI = -1;
@@ -107,7 +110,7 @@
 			if (map[title]) {
 				let itemBodyElement = element;//.querySelector('.main_item_login');	
 				if (aircraftIsApiNameEmpty(itemBodyElement, key)) {
-					Aircraft(key, itemBodyElement).loadingAppend(self, map[title])
+					Aircraft(key, itemBodyElement).loadingAppend(page, map[title])
 					.then(()=>{
 						element.querySelector(`.${key}btn`).style.visibility='visible';
 					})
@@ -127,7 +130,7 @@
 		loginUri.length <= loginI && (loginI = 0);
 		let loguri = loginUri[loginI]
 		element.style.minHeight = '0px';
-		Aircraft('item_login', element).loadingAppend(self, loguri).then(() => {
+		Aircraft('item_login', element).loadingAppend(page, loguri).then(() => {
 			element.style.minHeight = element.scrollHeight + 'px';
 			element.style.minHeight = '0px';
 		}).catch((error) => {
