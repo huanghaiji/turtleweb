@@ -9,40 +9,9 @@
     <ul onjs="api.foreach(this, ['',...desktop.menuOrder], 'key');">
         <li>
             <a href="javascript:void(0)">
-                <i class="fa fa-sitemap" aria-hidden="true" onjscreate="desktop.menuItem[key]?true:false"></i>
+                <i class="fa fa-sitemap" aria-hidden="true" 
+                   onjscreate="desktop.menuItem[key]?true:false"></i>
                 <span>{{(desktop.menuItem[key]?.title)||''}}</span>
-            </a>
-        </li>
-    </ul>
-    <ul>
-        <li>
-            <a href="javascript:void(0)">
-                <i class="fa fa-home" aria-hidden="true"></i>
-                <span>后台首页</span>
-            </a>
-        </li>
-        <li>
-            <a href="javascript:void(0)">
-                <i class="fa fa-sitemap" aria-hidden="true"></i>
-                <span>商品列表</span>
-            </a>
-        </li>
-        <li>
-            <a href="javascript:void(0)">
-                <i class="fa fa-user-circle-o" aria-hidden="true"></i>
-                <span>用户列表</span>
-            </a>
-        </li>
-        <li>
-            <a href="javascript:void(0)">
-                <i class="fa fa-shopping-bag" aria-hidden="true"></i>
-                <span>订单列表</span>
-            </a>
-        </li>
-        <li>
-            <a href="javascript:void(0)">
-                <i class="fa fa-th-large" aria-hidden="true"></i>
-                <span>功能列表</span>
             </a>
         </li>
     </ul>

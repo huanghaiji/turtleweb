@@ -2,13 +2,12 @@
     margin: 0; /* 设置所有元素的外边距为0 */
     padding: 0; /* 设置所有元素的内边距为0 */
 }
-body {
-    overflow: hidden; /* 隐藏页面滚动条 */
-}
+
 .navbar {
     position: relative; /* 设置导航栏相对定位 */
     width: 100vw; /* 设置导航栏宽度为视口宽度 */
     display: flex; /* 使用弹性布局 */
+    transition: ease-in-out 0.5s;
 }
 .main {
     font-size: 40px; /* 设置主要内容的字体大小 */

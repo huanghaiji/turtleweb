@@ -26,32 +26,35 @@
 				</div>
 			</div>
 
-			<div id="main_item" onjs="api.foreach(this,desktop.menuOrder,'key')">
-				<div class="main_item_pancel" onjs="this.onclick=()=>{itemOnClick(this,key)}">
-					<div class="main_item_bg">
-						<div class="main_item_left">
-							<div onjs="this.classList.add(key)"></div>
-							{{desktop.menuItem[key].title}}
-							<button onjs="this.classList.add(key+'btn');"
-									onjsclick="itemCloseClick(this,key,...arguments)">
-								关闭
-							</button>
-						</div>
-						<div class="main_item_bg_notify">
-							8:00 22℃ 80%
-							<br>
-							9:00 23℃ 70%
-						</div>
-						<img class="main_item_right_img" onjs='this.src=desktop.menuItem[key].icon' />
-					</div>
-					<div class="main_item_login">
+			<div id="#appfoots">
 
+				<div id="main_item" onjs="api.foreach(this,desktop.menuOrder,'key')">
+					<div class="main_item_pancel" onjs="this.onclick=()=>{itemOnClick(this,key)}">
+						<div class="main_item_bg">
+							<div class="main_item_left">
+								<div onjs="this.classList.add(key)"></div>
+								{{desktop.menuItem[key].title}}
+								<button onjs="this.classList.add(key+'btn');"
+										onjsclick="itemCloseClick(this,key,...arguments)">
+									关闭
+								</button>
+							</div>
+							<div class="main_item_bg_notify">
+								8:00 22℃ 80%
+								<br>
+								9:00 23℃ 70%
+							</div>
+							<img class="main_item_right_img" onjs='this.src=desktop.menuItem[key].icon' />
+						</div>
+						<div class="main_item_login">
+
+						</div>
 					</div>
+
 				</div>
 
+				<div id="appfloot"></div>
 			</div>
-
-			<div id="appfloot"></div>
 
 		</div>
 
@@ -145,19 +148,25 @@
 	function clickThemejd() {
 		let apiName = 'themejd';
 		let apiNameUrl = './themejd/themejd.html';
-        if (aircraftIsApiNameEmpty(appfoot, apiName)) {
+		appfoot.style.opacity = '0';
+		if (aircraftIsApiNameEmpty(appfoot, apiName)) {
 			Aircraft(apiName, appfoot).loadingAppend(page, apiNameUrl)
 				.then(() => {
-					mainfoot.classList.add('mainfootclose');
 					appfoot.classList.add('appflootopen');
+                    appfoot.style.opacity = '1';
+					appfoot.ontransitionend = function () {
+						appfoot.ontransitionend = undefined;
+						mainfoot.classList.add('mainfootclose');
+                    }
 				})
 				.catch((error) => {
 					alert(error + '\r\n' + JSON.stringify(error));
 				});
 		} else {
-			aircraftOnRemove(appfoot, apiName);
+            appfoot.ontransitionend = undefined;
 			appfoot.classList.remove('appflootopen');
 			mainfoot.classList.remove('mainfootclose');
+            aircraftOnRemove(appfoot, apiName);
 		}
 	}
 
