@@ -112,7 +112,17 @@
 		if (lgmode === 'lgdialog') {
 			element = document.createElement('div');
 			element.classList.add('lgdialog');
+			//let btn = document.createElement('button');
+			//btn.innerHTML = '关闭';
+			//btn.style.width = '40px';
+			//btn.style.position = 'absolute'
+			//btn.style.top = '20%';
+			//btn.style.right = '20%';
+			//element.appendChild(btn);
 			document.body.appendChild(element);
+            element.onclick = function () {
+				element.remove();
+			}
 		} else {
             element = loginElement || element;
 		}
