@@ -1,4 +1,9 @@
 function qurGet(url, success, error) {
+    let exist = filterToolInserJscodes.find((value) => { return url.indexOf(value) != -1 })
+    if (exist) {
+        success && success('');
+        return;
+    }
     url.lastIndexOf(/[?](0,1)version/) === -1 && (url = url + "?version=" + Math.random().toString(36).substring(2));
     var xtp = new XMLHttpRequest();
     //--异步时，才有效
@@ -61,14 +66,14 @@ function aircraftOnRemove(element, apiName) {
     //回收
     let api = undefined;
     Object.keys(window).forEach((key) => {
-        if (key.startsWith("__")) {
-            let handlers = window[ key]?.handlers;
-            if (handlers) {
+        if (key.startsWith("___aircraft___20241001")) {
+            let handlers = window[key]?.handlers;
+            if (handlers && handlers[apiName]) {
                 api = handlers[apiName].api;
                 delete handlers[apiName];
                 if (Object.keys(handlers).length == 0) {
                     delete window[key];
-                    delete window[key.substring(2)]
+                    delete window[key.substring('___aircraft___20241001'.length)]
                 }
             }
         }
@@ -140,8 +145,8 @@ function Aircraft(apiName, element) {
         } else {
             div = codes;
         }
-        api.global = global == window ? {} : global;
-        global.window = window;
+        api.global =  global;
+        api.global.window = window;
         didCodeNodes(element, div);
         docmap.clear();
         codeControll.clear();
@@ -209,7 +214,7 @@ function Aircraft(apiName, element) {
     }
 
     function proxy(target, key, api) {
-        if (target['__' + key] && target['__' + key].handlers[api.apiName]) {
+        if (target['___aircraft___20241001' + key] && target['___aircraft___20241001' + key].handlers[api.apiName]) {
             return;
         }
         if (!target[key]) {
@@ -220,14 +225,16 @@ function Aircraft(apiName, element) {
                     return hk ? handlers[hk].get(targetp, prop): target[prop];
                 }
             }
-            target['__' + key] = { handlers: {} };
+            target['___aircraft___20241001' + key] = { handlers: {} };
             //------------------
             //api.global[key].toString()，NOT；
             //
-            target[key] = new Proxy(api.global[key], handler);
+            if (typeof api.global[key] === 'function' || typeof api.global[key] === 'object') {
+                target[key] = new Proxy(api.global[key], handler);
+            }
         }
 
-        let handlers = target['__'+key].handlers;
+        let handlers = target['___aircraft___20241001'+key].handlers;
         let targetp = api.global[key];
         let sl = this;
         let handler = {
@@ -402,7 +409,7 @@ function Aircraft(apiName, element) {
     /**
      * 使用层面应用格式为: api.foreach( this, gloabl, [],'defineKey')
      */
-    function foreach(element, global, arr, paramName) {
+    function foreach(element, arr, paramName) {
         let codeNode = docmap.get(element)
 
         params[paramName] = undefined
@@ -430,4 +437,10 @@ function Aircraft(apiName, element) {
 }
 
 
-const filterToolInserJscodes = ['livereload.js?', 'class reloadPlugin']
+const filterToolInserJscodes = ['livereload.js?', 'class reloadPlugin', '/framework/apivm.js', '/framework/aircraft.js']
+
+
+/**
+ * only main
+ * */
+const page = {};

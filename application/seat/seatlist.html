@@ -24,7 +24,7 @@
 </style>
 
 <noscript id="seatlistcode">
-	<div id="seatlist" onjs="api['_index']=0;api.foreach(this,global,self.seats,'seatObj')">
+	<div id="seatlist" onjs="api['_index']=0;api.foreach(this,self.seats,'seatObj')">
 		<div class="seatlist-item" onjs="(api['_index']++)%2!=0 && (this.style.backgroundColor='transparent')">
 			<span>{{seatObj.date}}</span>
 			<span>{{seatObj.num}}</span>
@@ -44,6 +44,9 @@
 	</script>
 </div>
 
+
+
+<script type="text/javascript" src="./../../framework/apivm.js"></script>
 <script type="text/javascript" >
 	let seatContentDiv = document.body.querySelector('#seatcontent');
 
@@ -74,4 +77,9 @@
 	}, (err) => {
 		alert(JSON.stringify(err))
 	})
+
+	api.destory = () => {
+		delete api.seats;
+		delete page.seats;
+	}
 </script>

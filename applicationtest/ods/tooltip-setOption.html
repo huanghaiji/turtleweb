@@ -3,6 +3,7 @@
 <link rel="stylesheet" href="./lib/reset.css" />
 <script src="./lib/testHelper.js"></script>
 <script src="./tooltipTestHelper.js"></script>
+<script src="./../../framework/apivm.js"></script>
 
 <style>
     .tianqidiv h1 {
@@ -19,15 +20,7 @@
     }
 </style>
 
-<script type="text/javascript" mode="gone">
-    const api = {
-        apiName:'',
-        id: Date.now().toString(36),
-        parsefiledcode: (code) => {
-            return code;
-        }
-    };
-</script>
+
 
 <div class="tianqidiv" id="__api_id__" jsid>
     <h1>triggerOn: click, setOption when trigger axis (keep show)</h1>
@@ -186,7 +179,13 @@
             chars.dispose();
         });
         console.info("ddd>>>>>>>>>>>>",ecClickSetOptionAxisChart.length,api.apiName)
-        ecClickSetOptionAxisChart.length=0
+        ecClickSetOptionAxisChart.length = 0
+        api.define = undefined;
+        api.require = undefined;
+        api.testHelper = undefined;
+        api.define == page.define && (delete page.define);
+        api.require == page.require && (delete page.require);
+        api.testHelper == page.testHelper && (delete page.testHelper);
     }
 
 </script>

@@ -17,34 +17,16 @@
 		<div id='app' class="main_pancel" style="overflow: auto;">
 
 			<div class="main_top_bg">
-				<div class="wrapper">
-					<nav>
-						<input type="radio" name="tab" id="home" checked>
-						<input type="radio" name="tab" id="comment">
-						<input type="radio" name="tab" id="envelope">
-						<input type="radio" name="tab" id="heart">
-						<input type="radio" name="tab" id="user">
-						<label for="home" class="home" onclick="nickOnClick()">
-							<a><i class="fa fa-home" aria-hidden="true"></i>1.我的工号</a>
-						</label>
-						<label for="comment" class="comment" onclick="clickTheme()">
-							<a><i class="fa fa-comment" aria-hidden="true"></i>2.主题</a>
-						</label>
-						<label for="envelope" class="envelope">
-							<a><i class="fa fa-envelope" aria-hidden="true"></i>3.退出</a>
-						</label>
-						<label for="heart" class="heart">
-							<a><i class="fa fa-heart" aria-hidden="true"></i></a>
-						</label>
-						<label for="user" class="user">
-							<a><i class="fa fa-user" aria-hidden="true"></i></a>
-						</label>
-						<div class="tab"></div>
-					</nav>
+				<div>
+					<ul class="navUl">
+						<li class="navullinone" tip="me">1.我的工号</li>
+						<li class="navullinone" tip="theme">2.主题</li>
+						<li class="navullinone" tip="exit">3.退出</li>
+					</ul>
 				</div>
 			</div>
 
-			<div id="main_item" style="width: 100%;" onjs="api.foreach(this,global,desktop.menuOrder,'key')">
+			<div id="main_item" style="width: 100%;" onjs="api.foreach(this,desktop.menuOrder,'key')">
 				<div class="main_item_pancel" onjs="this.onclick=()=>{itemOnClick(this,key)}">
 					<div class="main_item_bg">
 						<div class="main_item_left">
@@ -75,8 +57,6 @@
 <script type="text/javascript" src="js/desktop.js"></script>
 
 <script type="text/javascript">
-	const pagemax = { page: {} }
-	const page = pagemax.page;
 
 	function clickTheme() {
 		let a = document.querySelector('.theme-content')
@@ -121,6 +101,12 @@
 				return;
 			}
 		}
+
+		//登录判断
+		if (!aircraftIsApiNameEmpty(element, 'item_login') && key=='') {
+			aircraftOnRemove(element, 'item_login');
+			return;
+		}
 		let loginElement = element.querySelector('.main_item_login');
 		element = loginElement || element;
 		if (element.querySelector('[aircraftapiname]')) {
@@ -149,4 +135,31 @@
 		element.style.visibility = 'collapse';
 		event.stopPropagation();
 	}
+
+
+	(function () {
+		document.querySelector('.navUl').querySelectorAll('li').forEach((value) => {
+			value.onclick = function () {
+				if (!value.clickState) {
+					value.clickState = true
+					value.classList.add('navUlliclick')
+				} else {
+					value.clickState = false
+					value.classList.remove('navUlliclick')
+				}
+				let tip = value.attributes['tip'].value;
+				switch (tip) {
+					case 'me':
+						nickOnClick();
+						break;
+					case 'theme':
+						clickTheme();
+						break;
+					case 'exit':
+						break;
+				}
+			}
+		});
+	})();
+
 </script>

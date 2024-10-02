@@ -24,20 +24,6 @@ body {
 	background-color: rgb(200, 207, 219);
 }
 
-.main_top_bg ul,ol{
-	margin: 0;
-	padding: 1rem 0;
-	width: 100%;
-}
-
-.main_top_bg li{
-	display: inline;
-	padding: 1rem;
-	font-size: 1rem;
-	font-weight: bold;
-}
-
-
 .main_item_pancel {
 	width: 90%;
 	max-width: 900px;
@@ -107,4 +93,38 @@ body {
 }
 .btn:hover {
   background-color: #3e8e41;
+}
+
+
+
+.navUl {
+	padding: 0;
+	margin: 0;
+	width: 100%;
+}
+
+    .navUl li {
+        padding: 1rem;
+        margin: 0.25rem 0rem;
+        width: auto;
+        display: inline-block;
+        border-radius: 0.5rem;
+        transition: .252s ease-in-out;
+		margin-left:.625rem;
+    }
+
+.navullinone {
+	font-size: 1rem;
+	color: aliceblue;
+	background-color: brown;
+}
+
+.navUlliclick {
+	background-color: #2b2b2b;
+	color: white;
+	text-decoration: underline;
+	text-decoration-style: dashed;
+	text-decoration-color: #ccc;
+	text-underline-offset: 5px;
+	font-size: 1.25rem;
 }

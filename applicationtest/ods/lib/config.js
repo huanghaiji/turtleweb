@@ -45,7 +45,7 @@
         }
     }
     if (!ecDistPath) {
-        ecDistPath = './lib/echarts';
+        ecDistPath = './../../runtime/echarts';
     }
 
     if (typeof require !== 'undefined') {
