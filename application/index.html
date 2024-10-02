@@ -76,17 +76,17 @@
 			.didAppend(page, document.querySelector('#main_item').cloneNode(true));
 	})()
 
-	let loginI = -1;
-	let loginUri = ['./login2/movelogin.html']
+	let loginI = 0;
+	let loginUri = ['./login2/movelogin.html'];
+    let map = {
+        '吃饭': './seat/seatlist.html',
+        '天气': './tianqi/tooltip-setOption.html',
+        '重量': './tianqi/tooltip-setOption.html'
+    };
 
 	function itemOnClick(element, key) {
 		if (key) {
 			let title = desktop.menuItem[key].title;
-            let map = {
-                '吃饭': './seat/seatlist.html',
-                '天气': './../applicationtest/ods/tooltip-setOption.html',
-                '重量': './../applicationtest/ods/tooltip-setOption.html'
-            };
 			if (map[title]) {
 				let itemBodyElement = element;//.querySelector('.main_item_login');	
 				if (aircraftIsApiNameEmpty(itemBodyElement, key)) {
@@ -112,8 +112,6 @@
 		if (element.querySelector('[aircraftapiname]')) {
 			return
 		}
-		loginI++;
-		loginUri.length <= loginI && (loginI = 0);
 		let loguri = loginUri[loginI]
 		element.style.minHeight = '0px';
 		Aircraft('item_login', element).loadingAppend(page, loguri).then(() => {
