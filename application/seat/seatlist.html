@@ -1,7 +1,8 @@
 <style type="text/css">
-	#seatcontent {
-		transition: ease-in-out 1s;
-	}
+    #seatcontent {
+        transition: ease-in-out 1s;
+        background-color: #c2c2c2c2;
+    }
 
 	.seatlist-item {
 		background-color: rgb(230, 237, 249);
@@ -15,6 +16,7 @@
 		color: #3b3b3b;
 		display: inline-block;
 		text-align:center;
+		font-weight:bold;
 	}
 
 	.seatlist-item span:first-child , .seatlist-item span:last-child{
@@ -37,7 +39,6 @@
 <div id="seatcontent">
 	<script mode='onjs'>
 		let el = this;
-		console.info(self,">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		self.loadingSeat = function() {
 			Aircraft('seats', el).didAppend(self, api['#seatlistcode'])
 		}
@@ -68,7 +69,6 @@
 		}
 		clearTimeout(showtimeid)
 		loadingDiv.innerHTML = '';
-        console.info(self, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		self.seats = JSON.parse(dataContent)
 		self.loadingSeat();
 		delete self.loadingSeat;

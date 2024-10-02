@@ -92,7 +92,7 @@ function aircraftIsApiNameEmpty(element, apiName) {
     return true;
 }
 
-function Aircraft(apiName, element) {
+function Aircraft(apiName, element,addmode) {
     let api = {
         apiName: apiName,
         id: hashcodeValue(),
@@ -147,7 +147,7 @@ function Aircraft(apiName, element) {
         }
         api.global =  global;
         api.global.window = window;
-        didCodeNodes(element, div);
+        didCodeNodes(element, div, undefined, undefined, addmode);
         docmap.clear();
         codeControll.clear();
         params = {};
@@ -312,6 +312,13 @@ function Aircraft(apiName, element) {
         empty && (jsUris[0]?.());
     }
 
+    function addmodeOpt(element,newNode,opt) {
+        if (opt === 'shift') {
+            element.parentNode.insertBefore(newNode, element);
+        } else {
+            element.appendChild(newNode);
+        }
+    }
     /**
      * 引擎层面应用格式为: <dom onjs=''/>
      */
@@ -354,19 +361,23 @@ function Aircraft(apiName, element) {
                         loaderjscode('www', codeNode.src);
                         continue;
                     }
-                    if (codeNode.attributes['mode']?.value == 'onjs') {
+                    let mode = codeNode.attributes['mode']
+                    if (mode?.value == 'onjs') {
                         block = codeNode.textContent;
                         didFunction(element, block, paramsKey, paramsVaue);
                         continue;
                     }
-                    if (codeNode.attributes['mode']?.value == 'on') {
+                    if (mode?.value == 'on') {
                         let f = document.createElement('script')
                         f.textContent = `(function(){${codeNode.textContent}})();`;
                         f.setAttribute(aircraftApiName, apiName);
-                        element.appendChild(f);
+                        addmodeOpt(element, f, opt);
                         continue;
                     }
-                    if (codeNode.attributes['mode']?.value == 'gone') {
+                    if (mode?.value == 'gone') {
+                        continue;
+                    }
+                    if (mode?.value.startsWith('param')) {
                         continue;
                     }
                     loaderjscode('local', codeNode.textContent);
@@ -380,7 +391,7 @@ function Aircraft(apiName, element) {
                         if (iscreate) {
                             newNode = codeNode.cloneNode();
                             newNode.setAttribute(aircraftApiName, apiName);
-                            element.appendChild(newNode);
+                            addmodeOpt(element, newNode, opt);
                             didCodeNodes(newNode, codeNode, paramsKey, paramsVaue);
                         }
                     } else {
@@ -389,7 +400,7 @@ function Aircraft(apiName, element) {
                     }
                 } else {
                     newNode = codeNode.cloneNode();
-                    element.appendChild(newNode);
+                    addmodeOpt(element, newNode, opt)
                     let textContent = codeNode.textContent;
                     let bi = textContent.indexOf('{{');
                     let ei = textContent.lastIndexOf('}}');
@@ -431,11 +442,23 @@ function Aircraft(apiName, element) {
         return didFunctionContent(code, element, 'api,global', [api, api.global], '__', '__', '_');
     }
 
+    function configreApiName(element) {
+        element.setAttribute(aircraftApiName, apiName);
+        return api;
+    }
+
+    function set(key, value) {
+        api[key] = value;
+        return api;
+    }
+
     api.didAppend = didAppend;
     api.loadingAppend = loadingAppend;
     api.foreach = foreach;
     api.parsefiledcode = parsefiledcode;
     api.initGlobalConfigre = initGlobalConfigre;
+    api.configreApiName = configreApiName;
+    api.set = set;
     return api;
 }
 

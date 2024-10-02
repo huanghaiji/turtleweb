@@ -16,6 +16,7 @@
     top: var(--navexp); /* 使主要内容距离顶部导航栏高度 */
     width:100%;
     display:grid;
+    z-index:1;
 }
 .main_item_dataui{
     width:calc(100% -20px);
@@ -92,10 +93,10 @@
     font-size: 12px; /* 字体大小12像素 */
     white-space: nowrap; /* 不换行显示 */
 }
-.navbar ul li a:hover {
-    color: #fff; /* 鼠标悬停时字体颜色为白色 */
-    background-color: #35495d; /* 鼠标悬停时背景颜色 */
-}
+/*.navbar ul li a:hover {
+    color: #fff;*/ /* 鼠标悬停时字体颜色为白色 */
+    /*background-color: #35495d;*/ /* 鼠标悬停时背景颜色 */
+/*}*/
 .navbar input:checked+label {
     left: 200px; /* 复选框选中时标签左移200像素 */
 }
@@ -127,3 +128,66 @@
     width: 100%;
     top: var(--navexp);*/ /*与lable保持一致高度*/
 /*}*/
+
+.selecta {
+    background-color: brown
+}
+
+/**
+   子窗口
+*/
+.themejditemwindow {
+    width: calc(100% - 3rem);
+    border-radius: 1rem;
+    padding-left: 1rem;
+    background-color:#cccccccc;
+    margin:1.4rem 1rem;
+/*    z-index: 200;
+    position: absolute;
+    background-color: antiquewhite;
+    top: 20px;*/
+}
+.themejditemwindowmenu {
+/*    position: absolute;*/
+    height: 2rem;
+    right: 1rem;
+    top: 0.5rem;
+    display:flex;
+    justify-content:right;
+}
+.themejditemwindowmenu button{
+    padding-left:20px;
+    padding-right:20px;
+    align-self:center;
+    margin-top:0.5rem;
+    margin-right:0.5rem;
+}
+.themejditemwindowmenu span{
+    padding-left:40px;
+    padding-right:40px;
+    align-self:center;
+    margin-top:0.5rem;
+    margin-right:0.5rem;
+    border-bottom-color:#1a1a1a;
+    border-bottom-width:1px;
+    border-bottom-style:dashed;
+    color:#2b2b2b;
+    font-weight:bold;
+}
+
+.themejditemwindowcontent{
+}
+
+.themejditemwindowcontentlast{
+    height:100vh;
+}
+
+.themejditemwindowcontentexp_off {
+    overflow: hidden;
+    height: 50px;
+}
+
+.themejditemwindowcontentexp_on {
+    overflow: auto;
+    height: auto;
+}

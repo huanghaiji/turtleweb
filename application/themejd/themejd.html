@@ -1,5 +1,6 @@
 <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-<link rel="stylesheet" href="./themejd.css">
+<link rel="stylesheet" href="./themejd.css" />
+<link rel="stylesheet" href="./themejd2.css" />
 
 <div class="navbar">
 
@@ -10,7 +11,7 @@
 
     <ul onjs="api.foreach(this, ['',...desktop.menuOrder], 'key');">
         <li>
-            <a onjsclick="api.global.themejdItemClick(key);">
+            <a onjsclick="api.themejdItemClick(this,key);">
                 <i class="fa fa-sitemap" aria-hidden="true"
                    onjscreate="desktop.menuItem[key]?true:false"></i>
                 <span>{{(desktop.menuItem[key]?.title)||''}}</span>
@@ -19,17 +20,100 @@
     </ul>
 
     <div class="themejdmain">
-        <div class="main_item_dataui">
+        <section>
+            <img src="./images/stars.png" class="stars" alt="">
+            <img src="./images/mountains_behind.png" class="behind" alt="">
+            <img src="./images/mountains_front.png" class="front" alt="">
+        </section>
+        <div class="main_item_dataui" onjs="api.dataui = this">
+            <div class="themejditemwindowcontentlast"></div>
         </div>
     </div>
 </div>
 
-<script type="text/javascript">
+<noscript id="themejdItemWindow" charset="utf-8">
+    <div class="themejditemwindow">
+        <div class="themejditemwindowmenu">
+            <span>{{desktop.menuItem[api.key].title}}</span>
+            <button class="themejditemwindowmenu_exp">折叠</button>
+            <button class="themejditemwindowmenu_close">关闭</button>
+        </div>
+        <div class="themejditemwindowcontent">
+        </div>
+    </div>
+</noscript>
 
-    function themejdItemClick(key) {
+<script mode="params">
+    const api = {
+        dataui: document.querySelector('main_item_dataui')
+    }
+</script>
+<script type="text/javascript">
+    const themejdItemWindow = api['#themejdItemWindow'];
+
+    function themejdItemClick(a, key) {
         let jdmain = document.querySelector('.themejdmain').querySelector('.main_item_dataui');
-        itemOnClick(jdmain, key,'lgdialog');
+
+        function aOn() {
+            a.parentElement.classList.add('selecta');
+        }
+        function aOff() {
+            a.parentElement.classList.remove('selecta');
+        }
+        if (a.parentElement.classList.contains("selecta")) {
+            let jdwContent = jdmain.querySelector('#themejd' + key);
+            jdmain.scrollTo(0, jdwContent.parentElement.offsetTop-10);
+            return;
+        }
+        aOn();
+        if (aircraftIsApiNameEmpty(jdmain, key)) {
+            let jdwContentLast = jdmain.querySelector('.themejditemwindowcontentlast')
+
+            let jdw = document.createElement('div');
+            Aircraft(key, jdw).configreApiName(jdw).set('key',key).didAppend(api.global, themejdItemWindow)
+            let jdwContent = jdw.querySelector('.themejditemwindowcontent');
+            
+            jdwContent.setAttribute('id', 'themejd' + key);
+            jdmain.insertBefore(jdw, jdwContentLast);
+            itemOnClick(jdwContent, key, 'lgdialog');
+            jdmain.scrollTo(0, jdw.offsetTop-10);
+
+            let exp = jdw.querySelector('.themejditemwindowmenu_exp');
+            exp.onclick = function () {
+                event.stopPropagation();
+                if (jdwContent.classList.contains('themejditemwindowcontentexp_off')) {
+                    jdwContent.classList.remove('themejditemwindowcontentexp_off');
+                    jdwContent.classList.add('themejditemwindowcontentexp_on');
+                    exp.innerHTML = '折叠';
+                } else {
+                    jdwContent.classList.remove('themejditemwindowcontentexp_on');
+                    jdwContent.classList.add('themejditemwindowcontentexp_off');
+                    exp.innerHTML = '展开';
+                }
+            }
+            jdw.querySelector('.themejditemwindowmenu_close').onclick = function () {
+                itemCloseClickOnlyRemove(jdmain, key, event);
+                aOff();
+                event.stopPropagation();
+            }
+        }
     }
 
-    api.global.themejdItemClick = themejdItemClick;
+    api.themejdItemClick = themejdItemClick;
+</script>
+
+<script type="text/javascript">
+    (function () {
+        const stars = document.querySelector('.stars')
+        const behind = document.querySelector('.behind')
+        const front = document.querySelector('.front')
+        const dataui = api.dataui;
+        dataui.addEventListener('scroll', function () {
+            let value = dataui.scrollTop
+            stars.style.left = value * 0.25 + 'px'
+            behind.style.top = value * 0.5 + 'px'
+            front.style.top = value * 0 + 'px'
+        })
+
+    })();
 </script>

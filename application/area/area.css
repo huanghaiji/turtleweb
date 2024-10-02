@@ -1,0 +1,31 @@
+﻿.areadiv table{
+    width:100%;
+    background-color:#cccccccc;
+}
+
+.areadiv tr {
+/*    background-color: rgb(200, 207, 219);*/
+}
+
+    .areadiv tr td {
+        padding: 10px 0px;
+        padding-left:10px;
+        border-bottom: 1px solid black;
+    }
+
+        .areadiv tr td[colspan='5'] {
+            background-color: #3b3b3b;
+            color: white;
+            font-weight:bold;
+            border-bottom-width:0px;
+        }
+
+    .areadiv tr:first-child {
+        background-color: #2b2b2b;
+        color: white;
+        font-weight: bold;
+        text-align:center;
+    }
+    .areadiv tr:first-child td:first-child{
+        text-align:left;
+    }

@@ -1,24 +1,61 @@
+<meta charset="UTF-8">
 <link rel="stylesheet" href="./../main/maincssTheme1.css" />
 <link rel="stylesheet" href="./movelogin.css">
 
 <ul class="bg-squares">
-	<li></li>
-	<li></li>
-	<li></li>
-	<li></li>
-	<li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
 </ul>
 
-<div class="movelogincontainer" onclick="event.stopPropagation();">
-	<h1 style="color: white;">
-		<span id="loginSubmitLoading"></span>
-		<span id="loginTitle"></span>
-	</h1>
-	<div class="form">
-		<input type="text" placeholder="你的账号">
-		<input type="password" placeholder="你的密码">
-		<button class="btn-login">登录</button>
-	</div>
+<div class="movelogincontainer" onclick="event.stopPropagation();" onjs="api.container = this">
+    <h1 style="color: white;">
+        <span id="loginSubmitLoading" onjs="api.loadingUI = this"></span>
+        <span id="loginTitle" onjs="api.title = this"></span>
+    </h1>
+    <div class="form">
+        <input type="text" placeholder="你的账号" onjs="api.usetext=this">
+        <input type="password" placeholder="你的密码" onjs="api.usepwd=this">
+        <button class="btn-login" onjs="api.lgbtn = this">登录</button>
+    </div>
 </div>
 
-<script src="./movelogin.js"></script>
+<script mode="params">
+    const api = {
+        usetext: document.body,
+        usepwd: document.body,
+        lgbtn: document.querySelector('.btn-login'),
+        container: document.querySelector('.movelogincontainer'),
+        loadingUI: document.querySelector('.movelogincontainer').querySelector('#loginSubmitLoading'),
+        title: document.querySelector('.movelogincontainer').querySelector('#loginTitle')
+    }
+</script>
+
+<script>
+    (function () {
+        const res = ['Welcome', 'Login', 'Need do'];
+        // 要操作的元素
+        const container = api.container;
+        const btn_login = api.lgbtn;
+        const title = api.title;
+        const loadingUI = api.loadingUI;
+        title.textContent = res[0];
+
+        // 登录按钮点击事件
+        btn_login.addEventListener('click', function () {
+            // 这里只作效果展示，就不写逻辑判断了。
+            container.classList.add('success');
+            title.textContent = res[1];
+            loadingPlay(loadingUI, title.offsetHeight * 0.5 + 'px', '#fff');
+            setTimeout(() => {
+                title.textContent = res[2];
+                container.classList.remove('success');
+                loadingUI.textContent = ''
+                self.loginState = 'true'
+            }, 6000);
+        })
+    })()
+
+</script>

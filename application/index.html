@@ -78,19 +78,20 @@
     let map = {
         '吃饭': './seat/seatlist.html',
         '天气': './tianqi/tooltip-setOption.html',
-        '重量': './tianqi/tooltip-setOption.html'
+		'重量': './tianqi/tooltip-setOption.html',
+		'组团': './area/area.html'
 	};
 
     let mainfoot = document.querySelector('#main_item');
     let appfoot = document.querySelector('#appfloot');
 
-	function itemOnClick(element, key,lgmode) {
+	function itemOnClick(element, key,lgmode,addmode) {
 		if (key) {
 			let title = desktop.menuItem[key].title;
 			if (map[title]) {
                 let itemBodyElement = element;//.querySelector('.main_item_dataui');	
 				if (aircraftIsApiNameEmpty(itemBodyElement, key)) {
-					Aircraft(key, itemBodyElement).loadingAppend(page, map[title])
+					Aircraft(key, itemBodyElement, addmode).loadingAppend(page, map[title])
 					.then(()=>{
 						let btn = element.querySelector(`.${key}btn`);
 						btn && (btn.style.visibility = 'visible');
@@ -112,13 +113,6 @@
 		if (lgmode === 'lgdialog') {
 			element = document.createElement('div');
 			element.classList.add('lgdialog');
-			//let btn = document.createElement('button');
-			//btn.innerHTML = '关闭';
-			//btn.style.width = '40px';
-			//btn.style.position = 'absolute'
-			//btn.style.top = '20%';
-			//btn.style.right = '20%';
-			//element.appendChild(btn);
 			document.body.appendChild(element);
             element.onclick = function () {
 				element.remove();
@@ -144,6 +138,11 @@
 		aircraftOnRemove(document.body, key);
 		element.style.visibility = 'collapse';
 		event.stopPropagation();
+	}
+
+	function itemCloseClickOnlyRemove(element, key, event) {
+		aircraftOnRemove(element, key);
+        event.stopPropagation();
 	}
 
     function nickOnClick() {
