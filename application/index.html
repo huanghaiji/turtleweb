@@ -3,7 +3,6 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>龟龟管理器HTML练习</title>
 		<link rel="stylesheet" href="./../kit/loading/noneloading.css" />
 		<link rel="stylesheet" href="nav/nva01.css" />
 		<link rel="stylesheet" href="entry/index.css" />
@@ -21,19 +20,22 @@
 					<ul class="navUl">
 						<li class="navullinone" tip="me">1.我的工号</li>
 						<li class="navullinone" tip="theme">2.主题</li>
+						<li class="navullinone" tip="themejd">3.经典</li>
 						<li class="navullinone" tip="exit">3.退出</li>
 					</ul>
 				</div>
 			</div>
 
-			<div id="main_item" style="width: 100%;" onjs="api.foreach(this,desktop.menuOrder,'key')">
+			<div id="main_item" onjs="api.foreach(this,desktop.menuOrder,'key')">
 				<div class="main_item_pancel" onjs="this.onclick=()=>{itemOnClick(this,key)}">
 					<div class="main_item_bg">
 						<div class="main_item_left">
 							<div onjs="this.classList.add(key)"></div>
 							{{desktop.menuItem[key].title}}
 							<button onjs="this.classList.add(key+'btn');"
-									onjsclick="itemCloseClick(this,key,...arguments)">关闭</button>
+									onjsclick="itemCloseClick(this,key,...arguments)">
+								关闭
+							</button>
 						</div>
 						<div class="main_item_bg_notify">
 							8:00 22℃ 80%
@@ -48,6 +50,9 @@
 				</div>
 
 			</div>
+
+			<div id="appfloot"></div>
+
 		</div>
 
 	</body>
@@ -57,17 +62,6 @@
 <script type="text/javascript" src="js/desktop.js"></script>
 
 <script type="text/javascript">
-
-	function clickTheme() {
-		let a = document.querySelector('.theme-content')
-		if (aircraftIsApiNameEmpty(a, 'app')) {
-			Aircraft('app', a).loadingAppend(page, './theme/theme.html').catch((error) => {
-				alert(JSON.stringify(error))
-			})
-		} else {
-			aircraftOnRemove(a, 'app')
-		}
-	}
 
 	(function() {
 		Aircraft(
@@ -82,7 +76,10 @@
         '吃饭': './seat/seatlist.html',
         '天气': './tianqi/tooltip-setOption.html',
         '重量': './tianqi/tooltip-setOption.html'
-    };
+	};
+
+    let mainfoot = document.querySelector('#main_item');
+    let appfoot = document.querySelector('#appfloot');
 
 	function itemOnClick(element, key) {
 		if (key) {
@@ -123,18 +120,50 @@
 
 	}
 
-	function nickOnClick() {
-		let element = document.body.querySelector('.main_top_bg');
-		itemOnClick(element, '');
-	}
-
 	function itemCloseClick(element, key,event) {
 		aircraftOnRemove(document.body, key);
 		element.style.visibility = 'collapse';
 		event.stopPropagation();
 	}
 
+    function nickOnClick() {
+        let element = document.body.querySelector('.main_top_bg');
+        itemOnClick(element, '');
+	}
 
+    function clickTheme() {
+        let a = document.querySelector('.theme-content')
+        if (aircraftIsApiNameEmpty(a, 'app')) {
+            Aircraft('app', a).loadingAppend(page, './theme/theme.html').catch((error) => {
+                alert(JSON.stringify(error))
+            })
+        } else {
+            aircraftOnRemove(a, 'app')
+        }
+	}
+
+	function clickThemejd() {
+		let apiName = 'themejd';
+		let apiNameUrl = './themejd/themejd.html';
+        if (aircraftIsApiNameEmpty(appfoot, apiName)) {
+			Aircraft(apiName, appfoot).loadingAppend(page, apiNameUrl)
+				.then(() => {
+					mainfoot.classList.add('mainfootclose');
+					appfoot.classList.add('appflootopen');
+				})
+				.catch((error) => {
+					alert(error + '\r\n' + JSON.stringify(error));
+				});
+		} else {
+			aircraftOnRemove(appfoot, apiName);
+			appfoot.classList.remove('appflootopen');
+			mainfoot.classList.remove('mainfootclose');
+		}
+	}
+
+	/**
+	 * 菜单设置
+	 * */
 	(function () {
 		document.querySelector('.navUl').querySelectorAll('li').forEach((value) => {
 			value.onclick = function () {
@@ -152,6 +181,9 @@
 						break;
 					case 'theme':
 						clickTheme();
+						break;
+					case 'themejd':
+						clickThemejd();
 						break;
 					case 'exit':
 						break;

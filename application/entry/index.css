@@ -20,6 +20,25 @@ body {
 	height: 100%;
 }
 
+#main_item{
+	width:100%;
+}
+
+.mainfootclose{
+	display:none;
+}
+
+#appfloot {
+	width: 100%;
+	overflow: hidden;
+	padding: 0;
+	margin: 0;
+}
+
+.appflootopen{
+	height:100%;
+}
+
 .main_top_bg {
 	background-color: rgb(200, 207, 219);
 }

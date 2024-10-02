@@ -319,7 +319,6 @@ function Aircraft(apiName, element) {
         docmap.set(element, codes);
 
         if (codes) {
-
             //运行element相关的js代码
             if (opt != runCodesOffJsOpt) {
                 let block = (codes.attributes?.['onjs']?.value);
@@ -376,10 +375,14 @@ function Aircraft(apiName, element) {
                 let tagName = codeNode.tagName;
                 if (tagName) {
                     if (tagName !== 'NOSCRIPT') {
-                        newNode = codeNode.cloneNode();
-                        newNode.setAttribute(aircraftApiName, apiName);
-                        element.appendChild(newNode);
-                        didCodeNodes(newNode, codeNode, paramsKey, paramsVaue);
+                        let block = (codeNode.attributes?.['onjscreate']?.value);
+                        let iscreate = !block? true: didFunction(element, block, paramsKey, paramsVaue, true);
+                        if (iscreate) {
+                            newNode = codeNode.cloneNode();
+                            newNode.setAttribute(aircraftApiName, apiName);
+                            element.appendChild(newNode);
+                            didCodeNodes(newNode, codeNode, paramsKey, paramsVaue);
+                        }
                     } else {
                         let noscriptId = codeNode.attributes['id'].value;
                         api['#' + noscriptId] = codeNode.textContent;
