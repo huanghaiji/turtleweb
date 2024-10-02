@@ -46,7 +46,7 @@
 							</div>
 							<img class="main_item_right_img" onjs='this.src=desktop.menuItem[key].icon' />
 						</div>
-						<div class="main_item_login">
+						<div class="main_item_dataui">
 
 						</div>
 					</div>
@@ -84,18 +84,19 @@
     let mainfoot = document.querySelector('#main_item');
     let appfoot = document.querySelector('#appfloot');
 
-	function itemOnClick(element, key) {
+	function itemOnClick(element, key,lgmode) {
 		if (key) {
 			let title = desktop.menuItem[key].title;
 			if (map[title]) {
-				let itemBodyElement = element;//.querySelector('.main_item_login');	
+                let itemBodyElement = element;//.querySelector('.main_item_dataui');	
 				if (aircraftIsApiNameEmpty(itemBodyElement, key)) {
 					Aircraft(key, itemBodyElement).loadingAppend(page, map[title])
 					.then(()=>{
-						element.querySelector(`.${key}btn`).style.visibility='visible';
+						let btn = element.querySelector(`.${key}btn`);
+						btn && (btn.style.visibility = 'visible');
 					})
 					.catch((error) => {
-						alert(JSON.stringify(error));
+						alert(error);
 					})
 				}
 				return;
@@ -107,11 +108,17 @@
 			aircraftOnRemove(element, 'item_login');
 			return;
 		}
-		let loginElement = element.querySelector('.main_item_login');
-		element = loginElement || element;
-		if (element.querySelector('[aircraftapiname]')) {
-			return
+		let loginElement = element.querySelector('.main_item_dataui');
+		if (lgmode === 'lgdialog') {
+			element = document.createElement('div');
+			element.classList.add('lgdialog');
+			document.body.appendChild(element);
+		} else {
+            element = loginElement || element;
 		}
+		//if (element.querySelector('[aircraftapiname]')) {
+		//	return
+		//}
 		let loguri = loginUri[loginI]
 		element.style.minHeight = '0px';
 		Aircraft('item_login', element).loadingAppend(page, loguri).then(() => {

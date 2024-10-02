@@ -9,26 +9,34 @@
     display: flex; /* 使用弹性布局 */
     transition: ease-in-out 0.5s;
 }
-.main {
-    font-size: 40px; /* 设置主要内容的字体大小 */
-    font-weight: bold; /* 设置主要内容的字体粗细 */
+.themejdmain {
     flex: 1; /* 设置主要内容弹性伸缩 */
-    height: calc(100vh - 43px); /* 计算主要内容高度 */
+    height: calc(100vh - var(--navexp)); /* 计算主要内容高度 */
     position: relative; /* 设置主要内容相对定位 */
-    top: 43px; /* 使主要内容距离顶部导航栏高度 */
-    display: flex; /* 使用弹性布局 */
-    justify-content: center; /* 水平居中 */
-    align-items: center; /* 垂直居中 */
+    top: var(--navexp); /* 使主要内容距离顶部导航栏高度 */
+    width:100%;
+    display:grid;
 }
+.main_item_dataui{
+    width:calc(100% -20px);
+    height:100%;
+    overflow:scroll;
+}
+
 #checkbox {
     display: none; /* 隐藏复选框 */
 }
+
+:root {
+   --navexp : 43px;
+}
+
 .navbar label {
     position: absolute; /* 设置标签绝对定位 */
     top: 0; /* 距离顶部0像素 */
     left: 70px; /* 距离左侧70像素 */
     width: 100%; /* 宽度100% */
-    height: 43px; /* 高度43像素 */
+    height: var(--navexp); /* 高度43像素 */
     font-size: 30px; /* 字体大小30像素 */
     color: #5a738e; /* 字体颜色 */
     background-color: #ededed; /* 背景颜色 */
@@ -36,6 +44,7 @@
     border: 1px solid #d9dee4; /* 边框样式 */
     cursor: pointer; /* 鼠标指针样式为手型 */
     transition: all 0.5s; /* 动画过渡效果 */
+    overflow:hidden;
 }
 .navbar ul {
     list-style: none; /* 移除列表样式 */
@@ -46,15 +55,14 @@
     overflow: hidden; /* 内容溢出隐藏 */
 }
 .navbar ul li {
-    height: 70px; /* 高度70像素 */
-    margin-bottom: 10px; /* 下外边距10像素 */
+    height: 70px; 
+    margin-bottom: 10px; 
 }
-.navbar ul li:first-child {
-    display: flex; /* 使用弹性布局 */
-    justify-content: center; /* 水平居中 */
-    align-items: center; /* 垂直居中 */
-    padding: 0 10px; /* 上下内边距0，左右内边距10像素 */
-}
+    .navbar ul li:first-child {
+        padding:0;
+        margin:0;
+        height:var(--navexp);
+    }
 .navbar ul li:first-child img {
     width: 50px; /* 图片宽度50像素 */
     height: 50px; /* 图片高度50像素 */
@@ -111,3 +119,11 @@
 .navbar input:checked~ul li a span {
     font-size: 14px; /* 复选框选中时字体大小 */
 }
+
+/*.themejdmain {
+    position: absolute;
+    top: 0;
+    left: 70px;
+    width: 100%;
+    top: var(--navexp);*/ /*与lable保持一致高度*/
+/*}*/
