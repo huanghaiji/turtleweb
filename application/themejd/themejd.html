@@ -62,7 +62,7 @@
         }
         if (a.parentElement.classList.contains("selecta")) {
             let jdwContent = jdmain.querySelector('#themejd' + key);
-            jdmain.scrollTo(0, jdwContent.parentElement.offsetTop-10);
+            jdmain.scrollTo({ left: 0, top: jdwContent.parentElement.offsetTop - 10 });
             return;
         }
         aOn();
@@ -76,7 +76,7 @@
             jdwContent.setAttribute('id', 'themejd' + key);
             jdmain.insertBefore(jdw, jdwContentLast);
             itemOnClick(jdwContent, key, 'lgdialog');
-            jdmain.scrollTo(0, jdw.offsetTop-10);
+            jdmain.scrollTo({ left: 0, top: jdw.offsetTop - 10 });
 
             let exp = jdw.querySelector('.themejditemwindowmenu_exp');
             exp.onclick = function () {
