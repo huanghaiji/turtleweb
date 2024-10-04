@@ -16,6 +16,10 @@ const desktop={
 			title:'组团',
 			icon:'entry/img/main_item_right.png'
 		},
+		device: {
+			title: '设备维护',
+			icon: 'entry/img/main_item_right.png'
+		},
 		jibing:{
 			title:'疾病',
 			icon:'entry/img/main_item_right.png'
@@ -34,6 +38,7 @@ const desktop={
 		'chifan',
 		'zhongliang',
 		'quyu',
+		'device',
 		'jibing',
 		'huangyuangui',
 		'sanjiaoyazi'

@@ -100,13 +100,12 @@ function Aircraft(apiName, element,addmode) {
     };
     let params = {};
     let jsUris = [];
-    let docmap = new Map();
-    let codeControll = new Map();
     let replacepath = '';
 
-    const breakCode = 'breakCode';
-    const runCodesOffJsOpt = 'runCodesOffJs';
     const aircraftApiName = 'aircraftApiName';
+    const modespacearray = 'array';
+    const modespaceoptforeachgonejs = "foreachgoneis";
+    const modepsaceoptforeachstyleid = "foreachstyld";
     const events = {
         onjsclick: 'onclick'
     };
@@ -148,8 +147,6 @@ function Aircraft(apiName, element,addmode) {
         api.global =  global;
         api.global.window = window;
         didCodeNodes(element, div, undefined, undefined, addmode);
-        docmap.clear();
-        codeControll.clear();
         params = {};
     }
 
@@ -319,124 +316,155 @@ function Aircraft(apiName, element,addmode) {
             element.appendChild(newNode);
         }
     }
+
     /**
      * 引擎层面应用格式为: <dom onjs=''/>
      */
-    function didCodeNodes(element, codes, paramsKey, paramsVaue, opt) {
-        docmap.set(element, codes);
-
+    function didCodeNodes(element, codes, paramsKey, paramsVaue, runstate) {
         if (codes) {
+            didCodeOnjs(element, codes, paramsKey, paramsVaue, runstate);
+
+            //判断当前节点是否为数组模式，则不使用子标签代码；
+            if (element.modescope == modespacearray) {
+                    return;
+            }
+
+            didCodeNodesChild(element, codes, paramsKey, paramsVaue, runstate)
+        }
+    }
+
+    function didCodeOnjs(element, codes, paramsKey, paramsVaue, runstate) {
+        !element.basicbuild && (element.basicbuild = codes);
+        //不需要执行element的codeNode的子有代码；
+        if (runstate !== modespaceoptforeachgonejs) {
             //运行element相关的js代码
-            if (opt != runCodesOffJsOpt) {
-                let block = (codes.attributes?.['onjs']?.value);
+            let block = (codes.attributes?.['onjs']?.value);
+            if (block == "api.foreach(this, ['代号', ...areatimes], 'tim')") {
+                console.info(block, element);
+            }
+            if (block) {
+                element.removeAttribute('onjs');
+                didFunction(element, block, paramsKey, paramsVaue);
+            }
+
+            Object.keys(events).forEach((key) => {
+                let block = (codes.attributes?.[key]?.value);
                 if (block) {
-                    element.removeAttribute('onjs');
-                    didFunction(element, block, paramsKey, paramsVaue);
+                    element.removeAttribute(key);
+                    element[events[key]] = function () {
+                        didFunction(element, block, paramsKey, paramsVaue, false, arguments);
+                    }
                 }
-            }
+            })
+            Object.keys(attributes).forEach((key) => {
+                if (element.attributes[key]) {
+                    let dkey = attributes[key];
+                    let block = (codes.attributes?.[dkey]?.value);
+                    block && element.setAttribute(dkey, didFunctionContent(block, element, paramsKey, paramsVaue, '__', '__', '_'));
+                }
+            });
+        }
+    }
 
-            if (opt != runCodesOffJsOpt) {
-                Object.keys(events).forEach((key) => {
-                    let block = (codes.attributes?.[key]?.value);
-                    if (block) {
-                        element.removeAttribute(key);
-                        element[events[key]] = function () {
-                            didFunction(element, block, paramsKey, paramsVaue, false, arguments);
-                        }
-                    }
-                })
-                Object.keys(attributes).forEach((key) => {
-                    if (element.attributes[key]) {
-                        let dkey = attributes[key];
-                        let block = (codes.attributes?.[dkey]?.value);
-                        block && element.setAttribute(dkey, didFunctionContent(block, element, paramsKey, paramsVaue, '__', '__', '_'));
-                    }
-                });
-            }
-
-            for (let i = 0, codeNode, newNode; (codeNode = codes.childNodes[i]); i++) {
-                let name = codeNode.nodeName;
-                if (name === 'SCRIPT') {
-                    if (codeNode.src) {
-                        loaderjscode('www', codeNode.src);
-                        continue;
-                    }
-                    let mode = codeNode.attributes['mode']
-                    if (mode?.value == 'onjs') {
-                        block = codeNode.textContent;
-                        didFunction(element, block, paramsKey, paramsVaue);
-                        continue;
-                    }
-                    if (mode?.value == 'on') {
-                        let f = document.createElement('script')
-                        f.textContent = `(function(){${codeNode.textContent}})();`;
-                        f.setAttribute(aircraftApiName, apiName);
-                        addmodeOpt(element, f, opt);
-                        continue;
-                    }
-                    if (mode?.value == 'gone') {
-                        continue;
-                    }
-                    if (mode?.value.startsWith('param')) {
-                        continue;
-                    }
-                    loaderjscode('local', codeNode.textContent);
+    function didCodeNodesChild(element, codes, paramsKey, paramsVaue, runstate) {
+        for (let i = 0, codeNode, newNode; (codeNode = codes.childNodes[i]); i++) {
+            let name = codeNode.nodeName;
+            if (name === 'SCRIPT') {
+                if (codeNode.src) {
+                    loaderjscode('www', codeNode.src);
                     continue;
                 }
-                let tagName = codeNode.tagName;
-                if (tagName) {
-                    if (tagName !== 'NOSCRIPT') {
-                        let block = (codeNode.attributes?.['onjscreate']?.value);
-                        let iscreate = !block? true: didFunction(element, block, paramsKey, paramsVaue, true);
-                        if (iscreate) {
-                            newNode = codeNode.cloneNode();
-                            newNode.setAttribute(aircraftApiName, apiName);
-                            addmodeOpt(element, newNode, opt);
-                            didCodeNodes(newNode, codeNode, paramsKey, paramsVaue);
-                        }
-                    } else {
-                        let noscriptId = codeNode.attributes['id'].value;
-                        api['#' + noscriptId] = codeNode.textContent;
+                let mode = codeNode.attributes['mode']
+                if (mode?.value == 'onjs') {
+                    block = codeNode.textContent;
+                    didFunction(element, block, paramsKey, paramsVaue);
+                    continue;
+                }
+                if (mode?.value == 'on') {
+                    let f = document.createElement('script')
+                    f.textContent = `(function(){${codeNode.textContent}})();`;
+                    f.setAttribute(aircraftApiName, apiName);
+                    addmodeOpt(element, f, opt);
+                    continue;
+                }
+                if (mode?.value == 'gone') {
+                    continue;
+                }
+                if (mode?.value.startsWith('param')) {
+                    continue;
+                }
+                loaderjscode('local', codeNode.textContent);
+                continue;
+            }
+            let tagName = codeNode.tagName;
+            if (tagName) {
+                if (tagName !== 'NOSCRIPT') {
+                    let block = (codeNode.attributes?.['onjscreate']?.value);
+                    let iscreate = !block ? true : didFunction(element, block, paramsKey, paramsVaue, true);
+                    if (iscreate) {
+                        newNode = codeNode.cloneNode();
+                        newNode.removeAttribute('onjscreate');
+                        newNode.setAttribute(aircraftApiName, apiName);
+                        addmodeOpt(element, newNode, runstate);
+                        didCodeNodes(newNode, codeNode, paramsKey, paramsVaue);
                     }
                 } else {
-                    newNode = codeNode.cloneNode();
-                    addmodeOpt(element, newNode, opt)
-                    let textContent = codeNode.textContent;
-                    let bi = textContent.indexOf('{{');
-                    let ei = textContent.lastIndexOf('}}');
-                    if (bi < ei && bi != -1 && ei != -1) {
-                        newNode.textContent = didFunctionContent(newNode.textContent, newNode, paramsKey, paramsVaue, '{{', '}}');
-                    }
+                    let noscriptId = codeNode.attributes['id'].value;
+                    api['#' + noscriptId] = codeNode.textContent;
                 }
-                let cmd = codeControll.get(codes);
-                if (cmd === breakCode) {
-                    break;
+            } else {
+                newNode = codeNode.cloneNode();
+                addmodeOpt(element, newNode, runstate);
+                let textContent = codeNode.textContent;
+                let bi = textContent.indexOf('{{');
+                let ei = textContent.lastIndexOf('}}');
+                if (bi < ei && bi != -1 && ei != -1) {
+                    newNode.textContent = didFunctionContent(newNode.textContent, newNode, paramsKey, paramsVaue, '{{', '}}');
                 }
             }
-
         }
-
-        codeControll.delete(codes);
-        docmap.delete(element, codes);
     }
 
     /**
      * 使用层面应用格式为: api.foreach( this, gloabl, [],'defineKey')
      */
-    function foreach(element, arr, paramName) {
-        let codeNode = docmap.get(element)
-
-        params[paramName] = undefined
-        let paramsKey = buildParamsKey()
-        for (let i = 0, item;
-            (item = arr[i]) != undefined; i++) {
-            params[paramName] = item;
-            didCodeNodes(element, codeNode, paramsKey, buildParamsVlaue(), runCodesOffJsOpt)
+    function foreach(element, arr, paramName, styleid) {
+        if (styleid == 'areabodytd') {
+            console.info(element, arr);
         }
+        element.modescope = modespacearray;
 
-        codeControll.set(codeNode, breakCode)
-        delete params[paramName]
+        let codes = [element.basicbuild];
+        params[paramName] = undefined;
+        let paramsKey = buildParamsKey();
+        function floop(handle) {
+            for (let i = 0, item;
+                (item = arr[i]) != undefined; i++) {
+                params[paramName] = item;
+                handle();
+            }
+        };
+        try {
+            if (styleid) {
+                codes = codes[0].querySelectorAll(`[styleid=${styleid}]`);
+                floop(() => {
+                    let pv = buildParamsVlaue();
+                    codes.forEach((code) => {
+                        let mapelementnode = code.cloneNode();
+                        element.appendChild(mapelementnode);
+                        didCodeNodes(mapelementnode, code, paramsKey, pv);
+                    });
+                });
+            } else {
+                floop(() => {
+                    didCodeNodesChild(element, codes[0], paramsKey, buildParamsVlaue());
+                })
+            }
+        } finally {
+            delete params[paramName];
+        }
     }
+
 
     function parsefiledcode(code) {
         return didFunctionContent(code, element, 'api,global', [api, api.global], '__', '__', '_');
@@ -465,6 +493,7 @@ function Aircraft(apiName, element,addmode) {
 
 const filterToolInserJscodes = ['livereload.js?', 'class reloadPlugin', '/framework/apivm.js', '/framework/aircraft.js']
 
+const addmodeShift = 'shift';
 
 /**
  * only main

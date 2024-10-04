@@ -60,7 +60,7 @@
 	let showtimeid=setTimeout(()=>{
 		loadingPlay(loadingDiv, loadingDiv.scrollHeight + 'px')
 	},1000);
-	qurGet('./../../applicationDatas/seats/seatdata.json', (dataContent) => {
+	qurGet('./../../applicationDatas/seatdata.json', (dataContent) => {
 		if (!dataContent) {
 			aircraftOnRemove(document.body, 'seatlistItem')
 			alert('数据不存在')
@@ -73,7 +73,6 @@
 		self.loadingSeat();
 		delete self.loadingSeat;
 		seatContentDiv.style.height = seatContentDiv.scrollHeight + 'px';
-		//document.querySelector('.chifanbtn').style.visibility='visible';
 	}, (err) => {
 		alert(JSON.stringify(err))
 	})

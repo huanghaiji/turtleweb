@@ -72,5 +72,95 @@
 
     </div>
 
+    <div class="areadiv" onjs="api.areadiv = this;">
+    </div>
 </body>
 </html>
+
+<noscript id="areacontent">
+    <table onjs="
+        api.foreach(this, [api.areatimes], 'areatimes', 'areatitle');
+        api.seatables = api.seatTable();
+        api.foreach(this, api.areasort, 'sort','areabody');">
+
+        <tr styleid="areatitle" onjs="api.foreach(this, ['代号', ...areatimes], 'tim')">
+            <td>{{tim}}</td>
+        </tr>
+
+        <tr styleid="areabody">
+            <td colspan="5">{{sort}}</td>
+        </tr>
+
+        <tr styleid="areabody" onjs="api.foreach(this, api.turtearray(api.seatables[sort]), 'tud');">
+            <td>
+                {{tud}}
+            </td>
+        </tr>
+
+    </table>
+</noscript>
+
+<script mode="params">
+    const api = {
+
+        }
+</script>
+
+<script>
+    let areasort;
+    let turtledata;
+    let areatimes;
+
+    seatTable = function () {
+        let table = {};
+        areasort.forEach((v) => {
+            table[v] = { name: v,turs:[] };
+        });
+        turtledata.forEach((turtle) => {
+            let turtleItem = table[turtle.areas][turtle.id];
+            if (!turtleItem) {
+                table[turtle.areas][turtle.id]
+                    = turtleItem
+                    = { nick: turtle.nick, id: turtle.id };
+                table[turtle.areas].turs.push(turtle.id);
+            }
+            if (areatimes.indexOf(turtle.time) != -1) {
+                turtleItem[turtle.time] = turtle.ag;
+            }
+        });
+        console.info('区域数据', table);
+        return table;
+    }
+
+    turtearray = function (area) {
+        let array = [];
+        area.turs.forEach((tn) => {
+            let tur = area[tn];
+            let turl = [tur.nick];
+            areatimes.forEach((tim) => {
+                turl.push(tur[tim])
+            });
+            array.push(turl);
+        })
+        console.info('<数组>', array);
+        return array;
+    }
+
+    qurGet('./../../applicationDatas/area.json', (datacontent) => {
+        let areadata = JSON.parse(datacontent);
+        areasort = areadata.areasort;
+        turtledata = areadata.turtledata;
+        areatimes = areadata.areatimes;
+        Aircraft(api.apiName, api.areadiv)
+            .set('areasort', areasort)
+            .set('turtledata', turtledata)
+            .set('areatimes', areatimes)
+            .set('seatTable', seatTable)
+            .set('turtearray', turtearray)
+            .didAppend(api.global,
+                api['#areacontent']);
+    }, (error) => {
+        alert(error + '\n' + JSON.stringify(error));
+    })
+
+</script>

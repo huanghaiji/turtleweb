@@ -1,8 +1,14 @@
 {
   "ExpandedNodes": [
     "",
-    "\\applicationtest"
+    "\\application",
+    "\\applicationDatas\\seats",
+    "\\applicationtest\\oh",
+    "\\application\\js",
+    "\\application\\tianqi\\css",
+    "\\framework",
+    "\\kit\\loading"
   ],
-  "SelectedNode": "\\applicationtest\\ods",
+  "SelectedNode": "\\application",
   "PreviewInSolutionExplorer": false
 }
