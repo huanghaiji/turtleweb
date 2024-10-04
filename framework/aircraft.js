@@ -184,21 +184,25 @@ function Aircraft(apiName, element,addmode) {
     }
 
     function didFunctionContent(textContent, element, paramsKey, paramsVaue, objStartStr, objEndStr, fieldsymbols) {
-        let bi = textContent.indexOf(objStartStr);
-        let ei = textContent.lastIndexOf(objEndStr);
-        if (bi < ei && bi != -1 && ei != -1) {
-            let block = textContent.substring(bi + objStartStr.length, ei);
-            if (fieldsymbols) {
-                block = block.replaceAll(fieldsymbols, '.');
+        //try {
+            let bi = textContent.indexOf(objStartStr);
+            let ei = textContent.lastIndexOf(objEndStr);
+            if (bi < ei && bi != -1 && ei != -1) {
+                let block = textContent.substring(bi + objStartStr.length, ei);
+                if (fieldsymbols) {
+                    block = block.replaceAll(fieldsymbols, '.');
+                }
+                return textContent.substring(0, bi) +
+                    didFunction(element,
+                        block,
+                        paramsKey,
+                        paramsVaue,
+                        true) +
+                    textContent.substring(ei + objEndStr.length);
             }
-            return textContent.substring(0, bi) +
-                didFunction(element,
-                    block,
-                    paramsKey,
-                    paramsVaue,
-                    true) +
-                textContent.substring(ei + objEndStr.length);
-        }
+        //} catch (e) {
+        //    console.info('didFunctionContent', e);
+        //}
     }
 
     function didReplacePath(str, path) {
@@ -429,9 +433,6 @@ function Aircraft(apiName, element,addmode) {
      * 使用层面应用格式为: api.foreach( this, gloabl, [],'defineKey')
      */
     function foreach(element, arr, paramName, styleid) {
-        if (styleid == 'areabodytd') {
-            console.info(element, arr);
-        }
         element.modescope = modespacearray;
 
         let codes = [element.basicbuild];
@@ -465,6 +466,53 @@ function Aircraft(apiName, element,addmode) {
         }
     }
 
+    function cursor(element, obj, paramName, styleid) {
+        element.modescope = modespacearray;
+
+        let query = (function (obj) {
+            if (Array.isArray(obj)) {
+                let i = 0;
+                return {
+                    next: () => {
+                        return obj[i++];
+                    },
+                    peek: () => {
+                        return obj[i - 1];
+                    },
+                    has: () => {
+                        return i < obj.length;
+                    }
+                }
+            }
+            let keys = Object.keys(obj);
+            let i = 0;
+            return {
+                next: () => {
+                    return obj[keys[i++]];
+                },
+                peek: () => {
+                    return obj[keys[i - 1]];
+                },
+                has: () => {
+                    return i < keys.length;
+                }
+            }
+        })(obj);
+
+        let codes = element.basicbuild.querySelectorAll(`[styleid=${styleid}]`);
+        while (query.next()) {
+            params[paramName] = query;
+            let pk = buildParamsKey();
+            let pv = buildParamsVlaue();
+            codes.forEach((code) => {
+                let mapelementnode = code.cloneNode();
+                element.appendChild(mapelementnode);
+                didCodeNodes(mapelementnode, code, pk, pv);
+                mapelementnode.modescope = modespacearray;
+            })
+        }
+        delete params[paramName];
+    }
 
     function parsefiledcode(code) {
         return didFunctionContent(code, element, 'api,global', [api, api.global], '__', '__', '_');
@@ -483,6 +531,7 @@ function Aircraft(apiName, element,addmode) {
     api.didAppend = didAppend;
     api.loadingAppend = loadingAppend;
     api.foreach = foreach;
+    api.cursor = cursor;
     api.parsefiledcode = parsefiledcode;
     api.initGlobalConfigre = initGlobalConfigre;
     api.configreApiName = configreApiName;

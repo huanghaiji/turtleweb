@@ -1,99 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./area.css"/>
-</head>
-<body>
-
-    <div class="areadiv">
-
-        <table>
-
-            <tr>
-                <td>代号</td>
-                <td>2024年7月1日</td>
-                <td>2024年8月1日</td>
-                <td>2024年9月1日</td>
-                <td>2024年10月1日</td>
-            </tr>
-
-            <tr>
-                <td colspan="5">
-                    A1
-                </td>
-            </tr>
-
-            <tr>
-                <td>X</td>
-                <td>130.2</td>
-                <td>120.3</td>
-            </tr>
-
-            <tr>
-                <td>Y</td>
-                <td>130.2</td>
-                <td>120.3</td>
-            </tr>
-
-            <tr>
-                <td>Z</td>
-                <td>130.2</td>
-                <td>120.3</td>
-            </tr>
-
-            <tr>
-                <td colspan="5">
-                    B2
-                </td>
-            </tr>
-
-            <tr>
-                <td>X</td>
-                <td>130.2</td>
-                <td>120.3</td>
-            </tr>
-
-            <tr>
-                <td>Y</td>
-                <td>130.2</td>
-                <td>120.3</td>
-            </tr>
-
-            <tr>
-                <td>Z</td>
-                <td>130.2</td>
-                <td>120.3</td>
-            </tr>
-
-        </table>
-
-    </div>
 
     <div class="areadiv" onjs="api.areadiv = this;">
     </div>
-</body>
-</html>
 
 <noscript id="areacontent">
     <table onjs="
         api.foreach(this, [api.areatimes], 'areatimes', 'areatitle');
-        api.seatables = api.seatTable();
-        api.foreach(this, api.areasort, 'sort','areabody');">
+        api.cursor(this, api.seatTable(), 'turlearea', 'areabody');">
 
         <tr styleid="areatitle" onjs="api.foreach(this, ['代号', ...areatimes], 'tim')">
             <td>{{tim}}</td>
         </tr>
 
         <tr styleid="areabody">
-            <td colspan="5">{{sort}}</td>
+            <td colspan="5">{{turlearea.peek().name}}</td>
         </tr>
 
-        <tr styleid="areabody" onjs="api.foreach(this, api.turtearray(api.seatables[sort]), 'tud');">
-            <td>
-                {{tud}}
+        <tr styleid="areabody" onjs="api.cursor(this, api.turtearray(turlearea.peek()), 'tud','tud2');">
+            <td styleid="tud2">
+                {{tud.peek()+"|"+  JSON.stringify(turlearea.peek())}}
             </td>
         </tr>
 
@@ -103,7 +30,7 @@
 <script mode="params">
     const api = {
 
-        }
+    }
 </script>
 
 <script>
