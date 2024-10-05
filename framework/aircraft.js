@@ -56,6 +56,20 @@ function hashcodeValue() {
     return hashValue;
 }
 
+function queryparent(element, tagname, atrid, atrvalue) {
+    tagname = tagname.toLocaleUpperCase();
+    for (let p = element.parentElement; p; p = p.parentElement) {
+        if (!atrid && p.tagName === tagname) {
+            return p;
+        }
+        if (p.attributes[atrid] === atrvalue) {
+            if (p.tagName === tagname) {
+                return p;
+            }
+        }
+    }
+}
+
 function aircraftOnRemove(element, apiName) {
     let lit = (element || document).querySelectorAll('[aircraftApiName]');
     lit.forEach((v) => {

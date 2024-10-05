@@ -18,12 +18,19 @@
             <td colspan="5">{{turlearea.peek().name}}</td>
         </tr>
 
-        <tr styleid="areabody" onjs="api.cursor(this, api.turtearray(turlearea.peek()), 'tud','tud2');">
+        <tr styleid="areabody" onjs="api.cursor(this, api.turtearray(turlearea.peek()), 'tud', 'tud2'); this.remove();">
             <td styleid="tud2">
-                {{tud.peek()+"|"+  JSON.stringify(turlearea.peek())}}
+                <script mode="onjs">
+                    let str = '';
+                    tud.peek().forEach((av) => {
+                        str =str+ '<td>' + (av||'') + '</td>';
+                    });
+                    let tr2 = document.createElement('tr');
+                    tr2.innerHTML = str;
+                    queryparent(this, 'table').append(tr2);
+                </script>
             </td>
         </tr>
-
     </table>
 </noscript>
 
@@ -31,6 +38,7 @@
     const api = {
 
     }
+    { { tud.peek() + "|" + JSON.stringify(turlearea.peek()) } }
 </script>
 
 <script>
