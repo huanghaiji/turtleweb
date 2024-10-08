@@ -5,8 +5,12 @@
 <div class="navbar">
 
     <input type="checkbox" id="checkbox">
-    <label for="checkbox">
-        <i class="fa fa-bars" aria-hidden="true"></i>
+    <label for="checkbox" style="display:flex;">
+        <i class="fa fa-bars" aria-hidden="true" style="align-self:center;"></i>
+        <audio src="./../../applicationDatas/audio/JarOfLove–曲婉婷.mp3"
+               style="align-self:center;margin-left:10px;"
+               controls>
+        </audio>
     </label>
 
     <ul onjs="api.foreach(this, ['',...desktop.menuOrder], 'key');">
