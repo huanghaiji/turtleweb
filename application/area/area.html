@@ -5,6 +5,13 @@
     <div class="areadiv" onjs="api.areadiv = this;">
     </div>
 
+    <div>
+        a.cursor(this,rowdata(){},'cursorwindow','styleid');
+        cursorwindow['sort'];
+        cursorwindow['turledata'].peeknode();cursorwindow['turledata'].nextnode();
+        cursorwindow['turledata'].hasnode();
+
+    </div>
 <noscript id="areacontent">
     <table onjs="
         api.foreach(this, [api.areatimes], 'areatimes', 'areatitle');
@@ -32,6 +39,7 @@
             </td>
         </tr>
     </table>
+
 </noscript>
 
 <script mode="params">
@@ -87,13 +95,14 @@
         turtledata = areadata.turtledata;
         areatimes = areadata.areatimes;
         Aircraft(api.apiName, api.areadiv)
-            .set('areasort', areasort)
-            .set('turtledata', turtledata)
-            .set('areatimes', areatimes)
-            .set('seatTable', seatTable)
-            .set('turtearray', turtearray)
-            .didAppend(api.global,
-                api['#areacontent']);
+            .entitySets({
+                areasort: areasort,
+                turtledata: turtledata,
+                areatimes: areatimes,
+                seatTable: seatTable,
+                turtearray: turtearray
+                })
+            .didAppend(api.global,api['#areacontent']);
     }, (error) => {
         alert(error + '\n' + JSON.stringify(error));
     })

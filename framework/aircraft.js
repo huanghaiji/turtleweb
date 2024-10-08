@@ -542,6 +542,13 @@ function Aircraft(apiName, element,addmode) {
         return api;
     }
 
+    function entitySets(obj) {
+        for (let k in obj) {
+            api[k] = obj[k];
+        }
+        return api;
+    }
+
     api.didAppend = didAppend;
     api.loadingAppend = loadingAppend;
     api.foreach = foreach;
@@ -550,6 +557,7 @@ function Aircraft(apiName, element,addmode) {
     api.initGlobalConfigre = initGlobalConfigre;
     api.configreApiName = configreApiName;
     api.set = set;
+    api.entitySets = entitySets;
     return api;
 }
 
