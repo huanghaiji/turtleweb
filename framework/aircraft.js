@@ -106,7 +106,7 @@ function aircraftIsApiNameEmpty(element, apiName) {
     return true;
 }
 
-function Aircraft(apiName, element,addmode) {
+function Aircraft(apiName, element, addmode) {
     let api = {
         apiName: apiName,
         id: hashcodeValue(),
@@ -119,7 +119,6 @@ function Aircraft(apiName, element,addmode) {
     const aircraftApiName = 'aircraftApiName';
     const modespacearray = 'array';
     const modespaceoptforeachgonejs = "foreachgoneis";
-    const modepsaceoptforeachstyleid = "foreachstyld";
     const events = {
         onjsclick: 'onclick'
     };
@@ -128,6 +127,25 @@ function Aircraft(apiName, element,addmode) {
     };
 
     jsUris.codes = []
+
+
+    function configreApiName(element) {
+        element.setAttribute(aircraftApiName, apiName);
+        return api;
+    }
+
+    function set(key, value) {
+        api[key] = value;
+        return api;
+    }
+
+    function entitySets(obj) {
+        for (let k in obj) {
+            api[k] = obj[k];
+        }
+        return api;
+    }
+
 
     function buildParamsKey() {
         return Object.keys(params).join(',')
@@ -158,7 +176,7 @@ function Aircraft(apiName, element,addmode) {
         } else {
             div = codes;
         }
-        api.global =  global;
+        api.global = global;
         api.global.window = window;
         didCodeNodes(element, div, undefined, undefined, addmode);
         params = {};
@@ -199,21 +217,21 @@ function Aircraft(apiName, element,addmode) {
 
     function didFunctionContent(textContent, element, paramsKey, paramsVaue, objStartStr, objEndStr, fieldsymbols) {
         //try {
-            let bi = textContent.indexOf(objStartStr);
-            let ei = textContent.lastIndexOf(objEndStr);
-            if (bi < ei && bi != -1 && ei != -1) {
-                let block = textContent.substring(bi + objStartStr.length, ei);
-                if (fieldsymbols) {
-                    block = block.replaceAll(fieldsymbols, '.');
-                }
-                return textContent.substring(0, bi) +
-                    didFunction(element,
-                        block,
-                        paramsKey,
-                        paramsVaue,
-                        true) +
-                    textContent.substring(ei + objEndStr.length);
+        let bi = textContent.indexOf(objStartStr);
+        let ei = textContent.lastIndexOf(objEndStr);
+        if (bi < ei && bi != -1 && ei != -1) {
+            let block = textContent.substring(bi + objStartStr.length, ei);
+            if (fieldsymbols) {
+                block = block.replaceAll(fieldsymbols, '.');
             }
+            return textContent.substring(0, bi) +
+                didFunction(element,
+                    block,
+                    paramsKey,
+                    paramsVaue,
+                    true) +
+                textContent.substring(ei + objEndStr.length);
+        }
         //} catch (e) {
         //    console.info('didFunctionContent', e);
         //}
@@ -237,7 +255,7 @@ function Aircraft(apiName, element,addmode) {
                 get: (targetp, prop) => {
                     let keys = Object.keys(handlers);
                     let hk = keys.find((kn) => { return handlers[kn].is() })
-                    return hk ? handlers[hk].get(targetp, prop): target[prop];
+                    return hk ? handlers[hk].get(targetp, prop) : target[prop];
                 }
             }
             target['___aircraft___20241001' + key] = { handlers: {} };
@@ -249,12 +267,12 @@ function Aircraft(apiName, element,addmode) {
             }
         }
 
-        let handlers = target['___aircraft___20241001'+key].handlers;
+        let handlers = target['___aircraft___20241001' + key].handlers;
         let targetp = api.global[key];
         let sl = this;
         let handler = {
             is: () => {
-                return new Function('handler','return this == handler.api').call(sl, handler);
+                return new Function('handler', 'return this == handler.api').call(sl, handler);
             },
             get: (_o, prop) => {
                 return targetp[prop];
@@ -286,7 +304,7 @@ function Aircraft(apiName, element,addmode) {
     function initGlobalConfigre() {
         Object.keys(api.global).forEach((key) => {
             if (key !== api.id && key !== 'window') {
-                proxy.call(api,api.global.window, key,api);
+                proxy.call(api, api.global.window, key, api);
             }
             console.info(key, api.global);
         })
@@ -327,7 +345,7 @@ function Aircraft(apiName, element,addmode) {
         empty && (jsUris[0]?.());
     }
 
-    function addmodeOpt(element,newNode,opt) {
+    function addmodeOpt(element, newNode, opt) {
         if (opt === 'shift') {
             element.parentNode.insertBefore(newNode, element);
         } else {
@@ -344,7 +362,7 @@ function Aircraft(apiName, element,addmode) {
 
             //判断当前节点是否为数组模式，则不使用子标签代码；
             if (element.modescope == modespacearray) {
-                    return;
+                return;
             }
 
             didCodeNodesChild(element, codes, paramsKey, paramsVaue, runstate)
@@ -453,8 +471,7 @@ function Aircraft(apiName, element,addmode) {
         params[paramName] = undefined;
         let paramsKey = buildParamsKey();
         function floop(handle) {
-            for (let i = 0, item;
-                (item = arr[i]) != undefined; i++) {
+            for (let item of arr) {
                 params[paramName] = item;
                 handle();
             }
@@ -480,79 +497,152 @@ function Aircraft(apiName, element,addmode) {
         }
     }
 
-    function cursor(element, obj, paramName, styleid) {
-        element.modescope = modespacearray;
+    //function cursor(element, obj, paramName, styleid) {
+    //    element.modescope = modespacearray;
+    //    let query = (function (obj) {
+    //        if (Array.isArray(obj)) {
+    //            let i = 0;
+    //            return {
+    //                next: () => {
+    //                    return obj[i++];
+    //                },
+    //                peek: () => {
+    //                    return obj[i - 1];
+    //                },
+    //                has: () => {
+    //                    return i < obj.length;
+    //                }
+    //            }
+    //        }
+    //        let keys = Object.keys(obj);
+    //        let i = 0;
+    //        return {
+    //            next: () => {
+    //                return obj[keys[i++]];
+    //            },
+    //            peek: () => {
+    //                return obj[keys[i - 1]];
+    //            },
+    //            has: () => {
+    //                return i < keys.length;
+    //            }
+    //        }
+    //    })(obj);
 
-        let query = (function (obj) {
-            if (Array.isArray(obj)) {
-                let i = 0;
-                return {
-                    next: () => {
-                        return obj[i++];
-                    },
-                    peek: () => {
-                        return obj[i - 1];
-                    },
-                    has: () => {
-                        return i < obj.length;
-                    }
-                }
-            }
-            let keys = Object.keys(obj);
-            let i = 0;
-            return {
-                next: () => {
-                    return obj[keys[i++]];
-                },
-                peek: () => {
-                    return obj[keys[i - 1]];
-                },
-                has: () => {
-                    return i < keys.length;
-                }
-            }
-        })(obj);
-
-        let codes = element.basicbuild.querySelectorAll(`[styleid=${styleid}]`);
-        while (query.next()) {
-            params[paramName] = query;
-            let pk = buildParamsKey();
-            let pv = buildParamsVlaue();
-            codes.forEach((code) => {
-                let mapelementnode = code.cloneNode();
-                element.appendChild(mapelementnode);
-                didCodeNodes(mapelementnode, code, pk, pv);
-                mapelementnode.modescope = modespacearray;
-            })
-        }
-        delete params[paramName];
-    }
+    //    let codes = element.basicbuild.querySelectorAll(`[styleid=${styleid}]`);
+    //    while (query.next()) {
+    //        params[paramName] = query;
+    //        let pk = buildParamsKey();
+    //        let pv = buildParamsVlaue();
+    //        codes.forEach((code) => {
+    //            let mapelementnode = code.cloneNode();
+    //            element.appendChild(mapelementnode);
+    //            didCodeNodes(mapelementnode, code, pk, pv);
+    //            mapelementnode.modescope = modespacearray;
+    //        })
+    //    }
+    //    delete params[paramName];
+    //}
 
     function parsefiledcode(code) {
         return didFunctionContent(code, element, 'api,global', [api, api.global], '__', '__', '_');
     }
 
-    function configreApiName(element) {
-        element.setAttribute(aircraftApiName, apiName);
-        return api;
-    }
-
-    function set(key, value) {
-        api[key] = value;
-        return api;
-    }
-
-    function entitySets(obj) {
-        for (let k in obj) {
-            api[k] = obj[k];
+    function cursor(element, obj, paramName, styleid, windowconsole) {
+        if (!styleid) {
+            alert('cursor styleid is empty!.');
+            return
         }
-        return api;
+        //设置此标签为游标模式，其子标签不需要执行。
+        element.modescope = modespacearray;
+        //查找所有相关的styleid;
+        let styleids = [];
+        for (let sid of (typeof styleid === 'string' ? [styleid] : styleid)) {
+            styleids.push(...element.basicbuild.querySelectorAll(`[styleid=${sid}]`));
+        }
+        //打开游标，并且获得一个游标结果，并且将产生的一个结果放入paramName中。
+        try {
+            let oi = Object.keys(obj);
+            let oii = 0;
+            while (oii < oi.length) {
+                let datas = windowconsole.call(element, obj,oi[oii++]);
+                let itors = [];
+                for (let k in datas) {
+                    datas[k]['class'] === 'aircraftItor' && itors.push(datas[k]);
+                    datas[k]['cursorelement'] = element;
+                }
+                if (datas) {
+                    params[paramName] = datas;
+                    let pk = buildParamsKey();
+                    let pv = buildParamsVlaue();
+                    for (let code of styleids) {
+                        let isnext = true;
+                        while (isnext) {
+                            isnext = false;
+                            let mapelementnode = code.cloneNode();
+                            element.appendChild(mapelementnode);
+                            didCodeNodes(mapelementnode, code, pk, pv);
+                            mapelementnode.modescope = modespacearray;
+                            for (let da of itors) {
+                                if (da.isNext) {
+                                    da.isNext = false;
+                                    isnext = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } finally {
+            delete params[paramName];
+        }
+    }
+
+    function cursoritor(obj) {
+        let itor = {};
+        let i = 0;
+        if (Array.isArray(obj)) {
+            itor = {
+                has: () => {
+                   return i < obj.length;
+                },
+                peek: () => {
+                    return obj[i];
+                }
+            };
+        } else {
+            let k = Object.keys(obj);
+            itor = {
+                has: () => {
+                   return i < k.length;
+                },
+                peek: () => {
+                    return obj[k[i]];
+                }
+            };
+        }
+        itor.isNext = false;
+        itor.next = () => {
+            i++;
+            itor.isNext = (true && itor.has());
+        };
+        /**
+         * 当迭代下标超过下标长度时，则重置下标；
+         * */
+        itor.resetformlimit = () => {
+            if (!itor.has()) {
+                i = 0;
+            }
+        };
+        itor.class = 'aircraftItor';
+        return itor;
     }
 
     api.didAppend = didAppend;
     api.loadingAppend = loadingAppend;
     api.foreach = foreach;
     api.cursor = cursor;
+    api.cursoritor = cursoritor;
     api.parsefiledcode = parsefiledcode;
     api.initGlobalConfigre = initGlobalConfigre;
     api.configreApiName = configreApiName;

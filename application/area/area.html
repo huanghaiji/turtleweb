@@ -5,51 +5,30 @@
     <div class="areadiv" onjs="api.areadiv = this;">
     </div>
 
-    <div style="border-radius:1rem;background-color:#2b2b2b;padding:1rem;margin-top:1rem;color:white;">
-        //传入一个function，用于每产生一个游标时，生成一行结果的数据。
-        <br />
-        a.cursor(this,rowdata(){},'cursorwindow','styleid');
-        <br />
-        //使用结果中的一个数据。
-        <br />
-        cursorwindow['sort'];
-        <br />
-        //peeknode,描述的是接收到一个数组结构的数据，需要使用该节点作为数组的子项使用。
-        <br />
-        //nextnode,则用于是否切换到下一组；
-        <br />
-        cursorwindow['turledata'].peeknode();cursorwindow['turledata'].nextnode();
-        <br />
-        //用于判断是否可继续迭代否。
-        <br />
-        cursorwindow['turledata'].hasnode();
-        <br />
-    </div>
-
 <noscript id="areacontent">
     <table onjs="
-        api.foreach(this, [api.areatimes], 'areatimes', 'areatitle');
-        api.cursor(this, api.seatTable(), 'turlearea', 'areabody');">
+    api.foreach(this, [api.areatimes], 'areatimes', 'areatitle');
+    api.cursor(this, api.seatTable(), 'turlearea', 'areabody',function (o, k) {
+        return {
+            areaname: o[k].name,
+            tuds: api.cursoritor(api.turtearray(o[k]))
+        }
+    });">
 
         <tr styleid="areatitle" onjs="api.foreach(this, ['代号', ...areatimes], 'tim')">
             <td>{{tim}}</td>
         </tr>
 
         <tr styleid="areabody">
-            <td colspan="5">{{turlearea.peek().name}}</td>
+            <td colspan="5">{{turlearea.areaname}}</td>
         </tr>
 
-        <tr styleid="areabody" onjs="api.cursor(this, api.turtearray(turlearea.peek()), 'tud', 'tud2'); this.remove();">
-            <td styleid="tud2">
-                <script mode="onjs">
-                    let str = '';
-                    tud.peek().forEach((av) => {
-                        str =str+ '<td>' + (av||'') + '</td>';
-                    });
-                    let tr2 = document.createElement('tr');
-                    tr2.innerHTML = str;
-                    queryparent(this, 'table').append(tr2);
-                </script>
+        <tr styleid="areabody" onjs="
+    let tuds = turlearea.tuds;
+    api.foreach(this, tuds.peek(), 'tud');
+    tuds.next();">
+            <td>
+                {{tud||''}}
             </td>
         </tr>
     </table>
