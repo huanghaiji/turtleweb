@@ -1,6 +1,8 @@
 ﻿.areadiv table{
-    width:100%;
+    max-width:100%;
+    margin:0.25rem auto;
     background-color:#cccccccc;
+    border-collapse:collapse;
 }
 
 .areadiv tr {
@@ -8,24 +10,31 @@
 }
 
     .areadiv tr td {
-        padding: 10px 0px;
-        padding-left:10px;
-        border-bottom: 1px solid black;
+        padding: 10px 1rem;
+        border-bottom: 1px solid #ababab;
+        border-right: 1px solid #ababab;
+        font-family: sans-serif;
+        text-align: center;
     }
-
-        .areadiv tr td[colspan='5'] {
-            background-color: #3b3b3b;
-            color: white;
-            font-weight:bold;
-            border-bottom-width:0px;
-        }
 
     .areadiv tr:first-child {
         background-color: #2b2b2b;
         color: white;
         font-weight: bold;
-        text-align:center;
     }
+
     .areadiv tr:first-child td:first-child{
+        text-align:left;
+    }
+
+    .areadiv tr:nth-child(2n) {
+        background-color: #cccccc;
+    }
+
+    .areadiv tr td[colspanall] {
+        background-color: #3b3b3b;
+        color: white;
+        font-weight: bold;
+        border-bottom-width: 0px;
         text-align:left;
     }

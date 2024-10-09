@@ -120,7 +120,8 @@ function Aircraft(apiName, element, addmode) {
     const modespacearray = 'array';
     const modespaceoptforeachgonejs = "foreachgoneis";
     const events = {
-        onjsclick: 'onclick'
+        onjsclick: ['onclick', Function],
+        onjscolspan: ['colspan', String]
     };
     const attributes = {
         jsid: 'id'
@@ -375,30 +376,32 @@ function Aircraft(apiName, element, addmode) {
         if (runstate !== modespaceoptforeachgonejs) {
             //运行element相关的js代码
             let block = (codes.attributes?.['onjs']?.value);
-            if (block == "api.foreach(this, ['代号', ...areatimes], 'tim')") {
-                console.info(block, element);
-            }
             if (block) {
                 element.removeAttribute('onjs');
                 didFunction(element, block, paramsKey, paramsVaue);
             }
 
-            Object.keys(events).forEach((key) => {
+            for (let key in events) {
                 let block = (codes.attributes?.[key]?.value);
                 if (block) {
                     element.removeAttribute(key);
-                    element[events[key]] = function () {
-                        didFunction(element, block, paramsKey, paramsVaue, false, arguments);
+                    if (events[key][1] == Function) {
+                        element[events[key][0]] = function () {
+                            didFunction(element, block, paramsKey, paramsVaue, false, arguments);
+                        };
+                    } else {
+                        element.setAttribute(events[key][0], didFunction(element,block, paramsKey, paramsVaue, true));
                     }
                 }
-            })
-            Object.keys(attributes).forEach((key) => {
+            }
+
+            for (let key in attributes) {
                 if (element.attributes[key]) {
                     let dkey = attributes[key];
                     let block = (codes.attributes?.[dkey]?.value);
                     block && element.setAttribute(dkey, didFunctionContent(block, element, paramsKey, paramsVaue, '__', '__', '_'));
                 }
-            });
+            }
         }
     }
 
@@ -496,53 +499,6 @@ function Aircraft(apiName, element, addmode) {
             delete params[paramName];
         }
     }
-
-    //function cursor(element, obj, paramName, styleid) {
-    //    element.modescope = modespacearray;
-    //    let query = (function (obj) {
-    //        if (Array.isArray(obj)) {
-    //            let i = 0;
-    //            return {
-    //                next: () => {
-    //                    return obj[i++];
-    //                },
-    //                peek: () => {
-    //                    return obj[i - 1];
-    //                },
-    //                has: () => {
-    //                    return i < obj.length;
-    //                }
-    //            }
-    //        }
-    //        let keys = Object.keys(obj);
-    //        let i = 0;
-    //        return {
-    //            next: () => {
-    //                return obj[keys[i++]];
-    //            },
-    //            peek: () => {
-    //                return obj[keys[i - 1]];
-    //            },
-    //            has: () => {
-    //                return i < keys.length;
-    //            }
-    //        }
-    //    })(obj);
-
-    //    let codes = element.basicbuild.querySelectorAll(`[styleid=${styleid}]`);
-    //    while (query.next()) {
-    //        params[paramName] = query;
-    //        let pk = buildParamsKey();
-    //        let pv = buildParamsVlaue();
-    //        codes.forEach((code) => {
-    //            let mapelementnode = code.cloneNode();
-    //            element.appendChild(mapelementnode);
-    //            didCodeNodes(mapelementnode, code, pk, pv);
-    //            mapelementnode.modescope = modespacearray;
-    //        })
-    //    }
-    //    delete params[paramName];
-    //}
 
     function parsefiledcode(code) {
         return didFunctionContent(code, element, 'api,global', [api, api.global], '__', '__', '_');

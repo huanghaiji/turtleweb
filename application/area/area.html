@@ -20,14 +20,14 @@
         </tr>
 
         <tr styleid="areabody">
-            <td colspan="5">{{turlearea.areaname}}</td>
+            <td colspanall onjscolspan="api.areatimes.length+1">{{turlearea.areaname}}</td>
         </tr>
 
-        <tr styleid="areabody" onjs="
+        <tr styleid="areabody" rowspan="0" onjs="
     let tuds = turlearea.tuds;
     api.foreach(this, tuds.peek(), 'tud');
     tuds.next();">
-            <td>
+            <td colspan="0">
                 {{tud||''}}
             </td>
         </tr>
