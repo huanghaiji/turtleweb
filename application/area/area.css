@@ -1,13 +1,23 @@
-﻿.areadiv table{
-    max-width:100%;
-    margin:0.25rem auto;
-    background-color:#cccccccc;
-    border-collapse:collapse;
+﻿.areadiv table {
+    max-width: 100%;
+    margin: 0.25rem auto;
+    background-color: #cccccccc;
+    border-collapse: collapse;
+    box-shadow: 0 0px 20px #888;
 }
 
 .areadiv tr {
 /*    background-color: rgb(200, 207, 219);*/
 }
+
+    .areadiv tr:hover {
+        font-weight: bold;
+        z-index: 100;
+        box-shadow: 0 0px 5px #888;
+    }
+        .areadiv tr:hover td {
+            background-color: #ff6a004b;
+        }
 
     .areadiv tr td {
         padding: 10px 1rem;
