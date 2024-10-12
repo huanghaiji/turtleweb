@@ -39,15 +39,13 @@
 <div id="seatcontent">
 	<script mode='onjs'>
 		let el = this;
-		self.loadingSeat = function() {
-			Aircraft('seats', el).didAppend(self, api['#seatlistcode'])
+		self.loadingSeat = function () {
+			Aircraft(api.apiName, el).didAppend(api['#seatlistcode']);
 		}
 	</script>
 </div>
 
 
-
-<script type="text/javascript" src="./../../framework/apivm.js"></script>
 <script type="text/javascript" >
 	let seatContentDiv = document.body.querySelector('#seatcontent');
 

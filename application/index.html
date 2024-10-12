@@ -70,7 +70,7 @@
 		Aircraft(
 				'main_item',
 				document.querySelector('#main_item'))
-			.didAppend(page, document.querySelector('#main_item').cloneNode(true));
+			.didAppend(document.querySelector('#main_item').cloneNode(true));
 	})()
 
 	let loginI = 0;
@@ -91,7 +91,7 @@
 			if (map[title]) {
                 let itemBodyElement = element;//.querySelector('.main_item_dataui');	
 				if (aircraftIsApiNameEmpty(itemBodyElement, key)) {
-					Aircraft(key, itemBodyElement, addmode).loadingAppend(page, map[title])
+					Aircraft(key, itemBodyElement, addmode).loadingAppend(map[title])
 					.then(()=>{
 						let btn = element.querySelector(`.${key}btn`);
 						btn && (btn.style.visibility = 'visible');
@@ -125,7 +125,7 @@
 		//}
 		let loguri = loginUri[loginI]
 		element.style.minHeight = '0px';
-		Aircraft('item_login', element).loadingAppend(page, loguri).then(() => {
+		Aircraft('item_login', element).loadingAppend( loguri).then(() => {
 			element.style.minHeight = element.scrollHeight + 'px';
 			element.style.minHeight = '0px';
 		}).catch((error) => {
@@ -153,7 +153,7 @@
     function clickTheme() {
         let a = document.querySelector('.theme-content')
         if (aircraftIsApiNameEmpty(a, 'app')) {
-            Aircraft('app', a).loadingAppend(page, './theme/theme.html').catch((error) => {
+            Aircraft('app', a).loadingAppend('./theme/theme.html').catch((error) => {
                 alert(JSON.stringify(error))
             })
         } else {
@@ -166,7 +166,7 @@
 		let apiNameUrl = './themejd/themejd.html';
 		appfoot.style.opacity = '0';
 		if (aircraftIsApiNameEmpty(appfoot, apiName)) {
-			Aircraft(apiName, appfoot).loadingAppend(page, apiNameUrl)
+			Aircraft(apiName, appfoot).loadingAppend( apiNameUrl)
 				.then(() => {
 					appfoot.classList.add('appflootopen');
                     appfoot.style.opacity = '1';

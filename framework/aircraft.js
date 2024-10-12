@@ -72,27 +72,12 @@ function queryparent(element, tagname, atrid, atrvalue) {
 
 function aircraftOnRemove(element, apiName) {
     let lit = (element || document).querySelectorAll('[aircraftApiName]');
-    lit.forEach((v) => {
-        if (v['attributes']['aircraftApiName']['value'] == apiName) {
-            v.remove()
-        }
-    })
-    //回收
-    let api = undefined;
-    Object.keys(window).forEach((key) => {
-        if (key.startsWith("___aircraft___20241001")) {
-            let handlers = window[key]?.handlers;
-            if (handlers && handlers[apiName]) {
-                api = handlers[apiName].api;
-                delete handlers[apiName];
-                if (Object.keys(handlers).length == 0) {
-                    delete window[key];
-                    delete window[key.substring('___aircraft___20241001'.length)]
-                }
-            }
-        }
-    })
-    api?.['destory']?.();
+    for (let v of lit) {
+        if (v['attributes']['aircraftApiName']?.value == apiName)
+            v.remove();
+    }
+    apis[apiName]?.destory?.();
+    delete apis[apiName];
 }
 
 function aircraftIsApiNameEmpty(element, apiName) {
@@ -107,6 +92,7 @@ function aircraftIsApiNameEmpty(element, apiName) {
 }
 
 
+const apis = {};
 const aircraftHandle = new Map();
 function createwindowAircraftPxy(k){
     const aircraftPxy = new Proxy(function () {
@@ -130,11 +116,14 @@ function createwindowAircraftPxy(k){
 }
 
 function Aircraft(apiName, element, addmode) {
-    let api = {
-        apiName: apiName,
-        id: hashcodeValue(),
-        global: undefined
-    };
+    let api = apis[apiName];
+    if (!api) {
+        api = apis[apiName] = {
+            apiName: apiName,
+            id: hashcodeValue(),
+            global: {}
+        };
+    }
     let params = {};
     let jsUris = [];
     let replacepath = '';
@@ -151,7 +140,7 @@ function Aircraft(apiName, element, addmode) {
         jsid: 'id'
     };
 
-    jsUris.codes = []
+    jsUris.codes = [];
 
 
     function configreApiName(element) {
@@ -181,11 +170,11 @@ function Aircraft(apiName, element, addmode) {
         return Object.values(params)
     }
 
-    function loadingAppend(global, path) {
+    function loadingAppend( path) {
         return new Promise((resolve, reject) => {
             replacepath = path.substring(0, path.lastIndexOf("/") + 1)
             qurGet(path, (codes) => {
-                didAppend(global, codes, replacepath)
+                didAppend(codes, replacepath)
                 resolve(codes)
             }, (error) => {
                 reject(error)
@@ -193,7 +182,7 @@ function Aircraft(apiName, element, addmode) {
         })
     }
 
-    function didAppend(global, codes, replacePath) {
+    function didAppend( codes, replacePath) {
         let div;
         if (typeof codes === "string") {
             div = document.createElement('div');
@@ -202,7 +191,6 @@ function Aircraft(apiName, element, addmode) {
         } else {
             div = codes;
         }
-        api.global = global;
         api.global.window = window;
         didCodeNodes(element, div, undefined, undefined, addmode);
         params = {};
@@ -623,6 +611,7 @@ function Aircraft(apiName, element, addmode) {
 const filterToolInserJscodes = ['livereload.js?', 'class reloadPlugin', '/framework/apivm.js', '/framework/aircraft.js']
 
 const addmodeShift = 'shift';
+const addmodeUnshift = 'unshift';
 
 /**
  * only main
