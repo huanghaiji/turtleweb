@@ -3,8 +3,8 @@
 const headerCodes= [
 	`
 		const selfApi= this;
-		//const window = selfApi.global;
-		//const self = selfApi.global;
+		const window = selfApi.global;
+		const self = selfApi.global;
 		console.info('plugin....loading.....');
 		function selfApiCreateElement(tag){
 			let doc = document.createElement(tag);
