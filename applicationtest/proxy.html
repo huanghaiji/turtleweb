@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+</head>
+<body>
+    <button onclick="window.target.config()">test proxy...</button>
+    <button onclick="window.target('test proxy function...')">test target...</button>
+</body>
+</html>
+
+<script>
+
+    let handle = {}
+    let f = function () {
+        console.info('curr this', this)
+        return target(...arguments);
+    };
+    let prxy = new Proxy(f, {
+        get: (t, p) => {
+            console.info('curr this', this)
+            return target[p];
+        }
+    });
+
+    (function () {
+        let target = function (a) {
+            alert(a+Date.now());
+        }
+
+        target.config = function () {
+            alert('config')
+        }
+
+        window.target = prxy;
+    })();
+
+
+</script>

@@ -239,7 +239,7 @@
     var pendingRequireCallbackParams = [];
     var requireCount = 0;
     function require(depsIds, cb) {
-        if (typeof depsIds === 'string') {
+        if (typeof depsIds === 'string' || !Array.isArray(depsIds)) {
             depsIds = [depsIds];
         }
         // Batch multiple requires callback theme in one frame.
@@ -273,6 +273,7 @@
 
     require.config = function (cfg) {
         requireCfg = cfg || {};
+        console.info('requireCfg>>>',requireCfg)
     }
 
     global.require = require;

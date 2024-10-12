@@ -106,6 +106,29 @@ function aircraftIsApiNameEmpty(element, apiName) {
     return true;
 }
 
+
+const aircraftHandle = new Map();
+function createwindowAircraftPxy(k){
+    const aircraftPxy = new Proxy(function () {
+        for (let hand of aircraftHandle.get(k)){
+            if (hand.isApi()) {
+                return hand.do(...arguments);
+            }
+        }
+    }, {
+        get: (t, p) => {
+            for (let hand of aircraftHandle.get(k)){
+                if (hand.isApi()) {
+                    let ff = hand.do;
+                    let fp = ff[p];
+                    return fp;
+                }
+            }
+        }
+    });
+    return aircraftPxy;
+}
+
 function Aircraft(apiName, element, addmode) {
     let api = {
         apiName: apiName,
@@ -121,7 +144,8 @@ function Aircraft(apiName, element, addmode) {
     const modespaceoptforeachgonejs = "foreachgoneis";
     const events = {
         onjsclick: ['onclick', Function],
-        onjscolspan: ['colspan', String]
+        onjscolspan: ['colspan', String],
+        onjsid: ['id', String]
     };
     const attributes = {
         jsid: 'id'
@@ -135,11 +159,12 @@ function Aircraft(apiName, element, addmode) {
         return api;
     }
 
+    //传入参数
     function set(key, value) {
         api[key] = value;
         return api;
     }
-
+     //传入参数
     function entitySets(obj) {
         for (let k in obj) {
             api[k] = obj[k];
@@ -147,11 +172,11 @@ function Aircraft(apiName, element, addmode) {
         return api;
     }
 
-
+    //序列化参数名
     function buildParamsKey() {
         return Object.keys(params).join(',')
     }
-
+    //序列化参数值
     function buildParamsVlaue() {
         return Object.values(params)
     }
@@ -247,43 +272,47 @@ function Aircraft(apiName, element, addmode) {
         })
     }
 
-    function proxy(target, key, api) {
-        if (target['___aircraft___20241001' + key] && target['___aircraft___20241001' + key].handlers[api.apiName]) {
-            return;
-        }
-        if (!target[key]) {
-            let handler = {
-                get: (targetp, prop) => {
-                    let keys = Object.keys(handlers);
-                    let hk = keys.find((kn) => { return handlers[kn].is() })
-                    return hk ? handlers[hk].get(targetp, prop) : target[prop];
+    let proxyglobal = []
+    //初始化global全局变量；
+    function initGlobalConfigre() {
+        Object.keys(api.global).forEach((key) => {
+            if (key !== api.id && key !== 'window') {
+                if (!window[key]) {
+                    window[key] = createwindowAircraftPxy(key);
                 }
+                if (proxyglobal.indexOf(key) == -1) {
+                    proxyglobal.push(key);
+                    let hand = {
+                        isApi: () => {
+                            return api === this;
+                        },
+                        do: api.global[key]
+                    }
+                    if (!aircraftHandle.has(key)) {
+                        aircraftHandle.set(key,[]);
+                    }
+                    aircraftHandle.get(key).push(hand);
+                }
+                //proxyglobal.indexOf(api.global[key]) == -1 && (window[key] = new Proxy(
+                //    typeof api.global[key] === 'function' ? function () { } :
+                //        Array.isArray(api.global[key]) ? [] : {}, {
+                //        get: () => {
+                //            if (this == api)
+                //                return api.global[key];
+                //            return window[key];
+                //        },
+                //        set: (tot, p, v) => {
+                //            if (this == api) {
+                //                api.global[key][p] = v;
+                //                return;
+                //            }
+                //            window[key](p, v);
+                //        }
+                //}));
             }
-            target['___aircraft___20241001' + key] = { handlers: {} };
-            //------------------
-            //api.global[key].toString()，NOT；
-            //
-            if (typeof api.global[key] === 'function' || typeof api.global[key] === 'object') {
-                target[key] = new Proxy(api.global[key], handler);
-            }
-        }
-
-        let handlers = target['___aircraft___20241001' + key].handlers;
-        let targetp = api.global[key];
-        let sl = this;
-        let handler = {
-            is: () => {
-                return new Function('handler', 'return this == handler.api').call(sl, handler);
-            },
-            get: (_o, prop) => {
-                return targetp[prop];
-            }
-        }
-        handler.api = api;
-        handlers[api.apiName] = handler;
+        });
     }
-
-    //编译解释执行代码；
+    //1，编译解释执行代码；2,执行代码
     function shiftNext() {
         jsUris.shift();
         if (jsUris.length != 0) {
@@ -291,24 +320,14 @@ function Aircraft(apiName, element, addmode) {
             return;
         }
         didFunction(element,
-            globalScriptExcel(),
+            `try{
+                (function(){${jsUris.codes.join(';')};}).call(api);
+            }catch(e){
+                console.info('shift code:',e);
+            }`,
             undefined,
             undefined,
             false);
-    }
-    //执行代码；
-    function globalScriptExcel() {
-        return `(api.global[api.id]=function(){${jsUris.codes.join(';')};})();
-                    (delete api.global[api.id]);`;
-    }
-    //初始化global全局变量；
-    function initGlobalConfigre() {
-        Object.keys(api.global).forEach((key) => {
-            if (key !== api.id && key !== 'window') {
-                proxy.call(api, api.global.window, key, api);
-            }
-            console.info(key, api.global);
-        })
     }
     //组合代码；
     function loaderjscode(mode, jsbody) {
@@ -346,14 +365,17 @@ function Aircraft(apiName, element, addmode) {
         empty && (jsUris[0]?.());
     }
 
+
+    //表层模型插入点；
     function addmodeOpt(element, newNode, opt) {
         if (opt === 'shift') {
             element.parentNode.insertBefore(newNode, element);
-        } else {
+        } else if (opt == 'unshift') {
+            element.parentNode.insertBefore(newNode, element.nextSibling);
+        }else {
             element.appendChild(newNode);
         }
     }
-
     /**
      * 引擎层面应用格式为: <dom onjs=''/>
      */
@@ -499,11 +521,9 @@ function Aircraft(apiName, element, addmode) {
             delete params[paramName];
         }
     }
-
-    function parsefiledcode(code) {
-        return didFunctionContent(code, element, 'api,global', [api, api.global], '__', '__', '_');
-    }
-
+    /**
+     * 应用层: api.cursor( this, {}, 'objkey','styleid',()=>{return o})
+     * */
     function cursor(element, obj, paramName, styleid, windowconsole) {
         if (!styleid) {
             alert('cursor styleid is empty!.');
@@ -582,24 +602,16 @@ function Aircraft(apiName, element, addmode) {
             i++;
             itor.isNext = (true && itor.has());
         };
-        /**
-         * 当迭代下标超过下标长度时，则重置下标；
-         * */
-        itor.resetformlimit = () => {
-            if (!itor.has()) {
-                i = 0;
-            }
-        };
         itor.class = 'aircraftItor';
         return itor;
     }
+
 
     api.didAppend = didAppend;
     api.loadingAppend = loadingAppend;
     api.foreach = foreach;
     api.cursor = cursor;
     api.cursoritor = cursoritor;
-    api.parsefiledcode = parsefiledcode;
     api.initGlobalConfigre = initGlobalConfigre;
     api.configreApiName = configreApiName;
     api.set = set;

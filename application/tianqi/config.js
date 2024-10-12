@@ -48,7 +48,9 @@
         ecDistPath = './../../runtime/echarts';
     }
 
+    console.info("require>>>", require);
     if (typeof require !== 'undefined') {
+        console.info("require>>>config", require);
         require.config({
             paths: {
                 'echarts': ecDistPath,

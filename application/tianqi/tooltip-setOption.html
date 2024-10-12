@@ -1,9 +1,4 @@
-<script src="./simpleRequire.js"></script>
-<script src="./config.js"></script>
-<link rel="stylesheet" href="./css/reset.css" />
-<script src="./testHelper.js"></script>
-<script src="./tooltipTestHelper.js"></script>
-<script src="./../../framework/apivm.js"></script>
+
 
 <style>
     .tianqidiv h1 {
@@ -22,93 +17,73 @@
 
 
 
-<div class="tianqidiv" id="__api_id__" jsid>
+<div class="tianqidiv" onjs="api.elediv = this;">
     <h1>triggerOn: click, setOption when trigger axis (keep show)</h1>
-    <div class="chart" id="click-setOption1__api_id__" jsid></div>
+    <div class="chart" onjs="api.clicksetOption1 = this;"></div>
     <h1>tooltip should auto show and auto disappear when setOption(..., {notMerge: true})</h1>
-    <div class="chart" id="setOption2__api_id__" jsid></div>
-    <div class="chart" id="setOption3__api_id__" style="height: 550px" jsid></div>
+    <div class="chart" onjs="api.setOption2 = this;"></div>
+    <div class="chart" style="height: 550px" onjs="api.setOption3 = this;"></div>
 </div>
+
+<link rel="stylesheet" href="./css/reset.css" />
+<script src="./simpleRequire.js"></script>
+<script src="./config.js"></script>
+<script src="./testHelper.js"></script>
+<script src="./tooltipTestHelper.js"></script>
 
 
 <script>
-    let pid = api.id;
-    const elediv = document.querySelector( api.parsefiledcode('#__api_id__'));
-    const clicksetOption1 = api.parsefiledcode('click-setOption1__api_id__');
-    const setOption3 = api.parsefiledcode('setOption3__api_id__');
-    const setOption2 = api.parsefiledcode('#setOption2__api_id__');
-    const ecClickSetOptionAxisChart = [];
+    if (api?.elediv) {
+        const clicksetOption1 = api.clicksetOption1;
+        const setOption3 = api.setOption3;
+        const setOption2 = api.setOption2;
+        const ecClickSetOptionAxisChart = [];
 
-    require(['echarts'], function (echarts) {
-        var option = {
-            legend: {
-                tooltip: {
-                    show: true,
-                    enterable: true
-                }
-            },
-            tooltip: {
-                trigger: 'axis',
-                triggerOn: 'click',
-                enterable: true,
-                axisPointer: {
-                    type: 'cross'
+        require(['echarts'], function (echarts) {
+            var option = {
+                legend: {
+                    tooltip: {
+                        show: true,
+                        enterable: true
+                    }
                 },
-                formatter: function () {
-                    return '<button onclick="console.log(\'click\');window.ecClickSetOptionAxisChart.setOption({tooltip: {}});">click me</button>';
-                }
-            }
-        };
-        var baseTop = 90;
-        var height = 150;
-        var gap = 50;
-        makeCategoryGrid(option, {
-            grid: {
-                top: baseTop,
-                height: height
-            },
-            yAxis: {
-                name: 'click show tip',
                 tooltip: {
-                    show: true
+                    trigger: 'axis',
+                    triggerOn: 'click',
+                    enterable: true,
+                    axisPointer: {
+                        type: 'cross'
+                    },
+                    formatter: function () {
+                        return '<button onclick="console.log(\'click\');window.ecClickSetOptionAxisChart.setOption({tooltip: {}});">click me</button>';
+                    }
                 }
-            }
-        });
-        baseTop += height + gap;
+            };
+            var baseTop = 90;
+            var height = 150;
+            var gap = 50;
+            makeCategoryGrid(option, {
+                grid: {
+                    top: baseTop,
+                    height: height
+                },
+                yAxis: {
+                    name: 'click show tip',
+                    tooltip: {
+                        show: true
+                    }
+                }
+            });
+            baseTop += height + gap;
 
-        var chart = createChart(clicksetOption1, echarts, option, baseTop);
-        ecClickSetOptionAxisChart.push(chart);
-    });
-
-    require(['echarts'], function (echarts) {
-        var colors = ['red', 'blue'];
-        var option = {
-            color: colors,
-            "tooltip": {
-                "show": true
-            },
-            "xAxis": {
-                "type": "category",
-                "data": ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-            },
-            "yAxis": {},
-            "series": [{
-                "data": [820, 932, 901, 934, 1290, 1330, 1320],
-                "type": 'bar'
-            }, {
-                "data": [620, 532, 501, 734, 1090, 1130, 1220],
-                "type": 'bar'
-            }]
-        };
-
-        var myChart = testHelper.create(echarts, setOption3, {
-            title: 'Click the blue bar, should no error throw',
-            option: option
+            var chart = createChart(clicksetOption1, echarts, option, baseTop);
+            ecClickSetOptionAxisChart.push(chart);
         });
 
-        myChart.on('click', function (params) {
-            myChart.clear();
-            myChart.setOption({
+        require(['echarts'], function (echarts) {
+            var colors = ['red', 'blue'];
+            var option = {
+                color: colors,
                 "tooltip": {
                     "show": true
                 },
@@ -120,72 +95,99 @@
                 "series": [{
                     "data": [820, 932, 901, 934, 1290, 1330, 1320],
                     "type": 'bar'
-                }]
-            });
-        });
-
-        ecClickSetOptionAxisChart.push(myChart);
-    });
-
-    require([
-        'echarts'
-    ], function (echarts) {
-        function genOption() {
-            return {
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'cross'
-                    }
-                },
-                xAxis: {},
-                yAxis: {},
-                series: [{
-                    type: 'scatter',
-                    data: [
-                        [Math.random(), Math.random() * 100],
-                        [Math.random(), Math.random() * 100],
-                        [Math.random(), Math.random() * 100]
-                    ]
+                }, {
+                    "data": [620, 532, 501, 734, 1090, 1130, 1220],
+                    "type": 'bar'
                 }]
             };
-        }
 
-        var chart = echarts.init(elediv.querySelector(setOption2));
-        chart.setOption(genOption());
-        ecClickSetOptionAxisChart.push(chart);
-
-        setTimeout(function () {
-            chart.dispatchAction({
-                type: 'showTip',
-                seriesIndex: 0,
-                dataIndex: 0
+            var myChart = testHelper.create(echarts, setOption3, {
+                title: 'Click the blue bar, should no error throw',
+                option: option
             });
 
-            setTimeout(function () {
-                // chart.clear();
-                chart.dispose();
+            myChart.on('click', function (params) {
+                myChart.clear();
+                myChart.setOption({
+                    "tooltip": {
+                        "show": true
+                    },
+                    "xAxis": {
+                        "type": "category",
+                        "data": ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                    },
+                    "yAxis": {},
+                    "series": [{
+                        "data": [820, 932, 901, 934, 1290, 1330, 1320],
+                        "type": 'bar'
+                    }]
+                });
+            });
 
-                chart = echarts.init(elediv.querySelector(setOption2));
-
-                chart.setOption(genOption());
-            },10000)
-        }, 100);
-    });
-
-    api.destory = function () {
-        ecClickSetOptionAxisChart.forEach((chars) => {
-            chars.clear();
-            chars.dispose();
+            ecClickSetOptionAxisChart.push(myChart);
         });
-        console.info("ddd>>>>>>>>>>>>",ecClickSetOptionAxisChart.length,api.apiName)
-        ecClickSetOptionAxisChart.length = 0
-        api.define = undefined;
-        api.require = undefined;
-        api.testHelper = undefined;
-        api.define == page.define && (delete page.define);
-        api.require == page.require && (delete page.require);
-        api.testHelper == page.testHelper && (delete page.testHelper);
+
+        require([
+            'echarts'
+        ], function (echarts) {
+            function genOption() {
+                return {
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross'
+                        }
+                    },
+                    xAxis: {},
+                    yAxis: {},
+                    series: [{
+                        type: 'scatter',
+                        data: [
+                            [Math.random(), Math.random() * 100],
+                            [Math.random(), Math.random() * 100],
+                            [Math.random(), Math.random() * 100]
+                        ]
+                    }]
+                };
+            }
+
+            var chart = echarts.init(setOption2);
+            chart.setOption(genOption());
+            ecClickSetOptionAxisChart.push(chart);
+
+            setTimeout(function () {
+                chart.dispatchAction({
+                    type: 'showTip',
+                    seriesIndex: 0,
+                    dataIndex: 0
+                });
+
+                setTimeout(function () {
+                    // chart.clear();
+                    chart.dispose();
+
+                    chart = echarts.init(setOption2);
+
+                    chart.setOption(genOption());
+                }, 10000)
+            }, 100);
+        });
+
+        api.destory = function () {
+            ecClickSetOptionAxisChart.forEach((chars) => {
+                chars.clear();
+                chars.dispose();
+            });
+            console.info("ddd>>>>>>>>>>>>", ecClickSetOptionAxisChart.length, api.apiName)
+            ecClickSetOptionAxisChart.length = 0
+            api.define = undefined;
+            api.require = undefined;
+            api.testHelper = undefined;
+            api.define == page.define && (delete page.define);
+            api.require == page.require && (delete page.require);
+            api.testHelper == page.testHelper && (delete page.testHelper);
+        }
+
     }
 
 </script>
