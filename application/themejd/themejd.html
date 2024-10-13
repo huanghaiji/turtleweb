@@ -70,36 +70,34 @@
             return;
         }
         aOn();
-        if (aircraftIsApiNameEmpty(jdmain, key)) {
-            let jdwContentLast = jdmain.querySelector('.themejditemwindowcontentlast')
+        let jdwContentLast = jdmain.querySelector('.themejditemwindowcontentlast')
 
-            let jdw = document.createElement('div');
-            Aircraft(key, jdw).configreApiName(jdw).set('key',key).didAppend( themejdItemWindow)
-            let jdwContent = jdw.querySelector('.themejditemwindowcontent');
-            
-            jdwContent.setAttribute('id', 'themejd' + key);
-            jdmain.insertBefore(jdw, jdwContentLast);
-            itemOnClick(jdwContent, key, 'lgdialog');
-            jdmain.scrollTo({ left: 0, top: jdw.offsetTop - 10 });
+        let jdw = document.createElement('div');
+        Aircraft(key, jdw).configreApiName(jdw).set('key', key).didAppend(themejdItemWindow)
+        let jdwContent = jdw.querySelector('.themejditemwindowcontent');
 
-            let exp = jdw.querySelector('.themejditemwindowmenu_exp');
-            exp.onclick = function () {
-                event.stopPropagation();
-                if (jdwContent.classList.contains('themejditemwindowcontentexp_off')) {
-                    jdwContent.classList.remove('themejditemwindowcontentexp_off');
-                    jdwContent.classList.add('themejditemwindowcontentexp_on');
-                    exp.innerHTML = '折叠';
-                } else {
-                    jdwContent.classList.remove('themejditemwindowcontentexp_on');
-                    jdwContent.classList.add('themejditemwindowcontentexp_off');
-                    exp.innerHTML = '展开';
-                }
+        jdwContent.setAttribute('id', 'themejd' + key);
+        jdmain.insertBefore(jdw, jdwContentLast);
+        itemOnClick(jdwContent, key, 'lgdialog');
+        jdmain.scrollTo({ left: 0, top: jdw.offsetTop - 10 });
+
+        let exp = jdw.querySelector('.themejditemwindowmenu_exp');
+        exp.onclick = function () {
+            event.stopPropagation();
+            if (jdwContent.classList.contains('themejditemwindowcontentexp_off')) {
+                jdwContent.classList.remove('themejditemwindowcontentexp_off');
+                jdwContent.classList.add('themejditemwindowcontentexp_on');
+                exp.innerHTML = '折叠';
+            } else {
+                jdwContent.classList.remove('themejditemwindowcontentexp_on');
+                jdwContent.classList.add('themejditemwindowcontentexp_off');
+                exp.innerHTML = '展开';
             }
-            jdw.querySelector('.themejditemwindowmenu_close').onclick = function () {
-                itemCloseClickOnlyRemove(jdmain, key, event);
-                aOff();
-                event.stopPropagation();
-            }
+        }
+        jdw.querySelector('.themejditemwindowmenu_close').onclick = function () {
+            itemCloseClickOnlyRemove(jdmain, key, event);
+            aOff();
+            event.stopPropagation();
         }
     }
 
