@@ -136,9 +136,6 @@ function Aircraft(apiName, element, addmode) {
         onjscolspan: ['colspan', String],
         onjsid: ['id', String]
     };
-    const attributes = {
-        jsid: 'id'
-    };
 
     jsUris.codes = [];
 
@@ -404,14 +401,6 @@ function Aircraft(apiName, element, addmode) {
                     }
                 }
             }
-
-            for (let key in attributes) {
-                if (element.attributes[key]) {
-                    let dkey = attributes[key];
-                    let block = (codes.attributes?.[dkey]?.value);
-                    block && element.setAttribute(dkey, didFunctionContent(block, element, paramsKey, paramsVaue, '__', '__', '_'));
-                }
-            }
         }
     }
 
@@ -448,11 +437,11 @@ function Aircraft(apiName, element, addmode) {
             let tagName = codeNode.tagName;
             if (tagName) {
                 if (tagName !== 'NOSCRIPT') {
-                    let block = (codeNode.attributes?.['onjscreate']?.value);
+                    let block = (codeNode.attributes?.['onjsinit']?.value);
                     let iscreate = !block ? true : didFunction(element, block, paramsKey, paramsVaue, true);
                     if (iscreate) {
                         newNode = codeNode.cloneNode();
-                        newNode.removeAttribute('onjscreate');
+                        newNode.removeAttribute('onjsinit');
                         newNode.setAttribute(aircraftApiName, apiName);
                         addmodeOpt(element, newNode, runstate);
                         didCodeNodes(newNode, codeNode, paramsKey, paramsVaue);

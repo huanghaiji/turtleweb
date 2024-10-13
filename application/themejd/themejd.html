@@ -17,7 +17,7 @@
         <li>
             <a onjsclick="api.themejdItemClick(this,key);">
                 <i class="fa fa-sitemap" aria-hidden="true"
-                   onjscreate="desktop.menuItem[key]?true:false"></i>
+                   onjsinit="desktop.menuItem[key]?true:false"></i>
                 <span>{{(desktop.menuItem[key]?.title)||''}}</span>
             </a>
         </li>
