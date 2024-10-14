@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        img {
+            width: 30%;
+            display: inline-block;
+            margin: 0;
+            float:left;
+            margin-left:5px;
+        }
+        .div1 h2,.div1 h3{
+            border:solid 1px #ccc;
+            padding:5px;
+            margin:0;
+         }
+        .div1 div {
+        }
+        .div1 br{
+            clear:both;
+        }
+
+        .div1{
+            margin-bottom:1rem;
+            background-color:#2b2b2b;
+            color:white;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div>
+        <h1>Aircraft api</h1>
+        <div class="div1">
+            <h2>1.Aircraft.loadingAppend()</h2>
+            <h3>ajax异步请求的方式获取另一个html的文件，以及关联的css，js等文件.</h3>
+            <h2>Aircraft.didAppend()</h2>
+            <h3>对传入进来的html/css/js等文件解释并且编译</h3>
+            <h2>Aircraft.didCodeNodes</h2>
+            <h3>执行编译，解释</h3>
+            <div>
+                <img src="6.png" style="width:15%" />
+            </div>
+            <div>
+                <img src="7.png" style="width:50%" />
+            </div>
+            <br />
+        </div>
+
+        <div class="div1">
+            <h2>2.Window相同字段不同page的取值区分</h2>
+            <h3>复用相同的代码源时，区分不同的page，不能共享相同的值。</h3>
+            <div>
+                <img src="8.png" style="width:50%" />
+            </div>
+            <br />
+        </div>
+
+        <div class="div1">
+            <h2>
+                3.api.foreach( element, code, paramName, styleid);
+            </h2>
+            <h3>以数组的形式生成标签</h3>
+            <div>
+                <img src="1.png" />
+                <img src="2.png" />
+            </div>
+            <br />
+        </div>
+
+        <div class="div1">
+            <h2>
+                4.api.cursor( element, obj, paramName, styleid, row-build-function);
+            </h2>
+            <h3>
+                以游标的形式，生成一组行构建数据构建标签。
+            </h3>
+            <h2>
+                api.cursoritor(obj)
+            </h2>
+            <h3>
+                以迭代器的方式构建标签。使用peek获得当前的数据，使用next进行下轮的标签生成。
+            </h3>
+            <div>
+                <img src="3.png" />
+                <img src="4.png" />
+                <img src="5.png" />
+            </div>
+            <br />
+        </div>
+
+        <div class="div1">
+            <h2>5.page构建 next dev</h2>
+
+        </div>
+
+        <video src="M.mp4" style="width:100%;max-width:1080px;" controls></video>
+
+        <br />
+    </div>
+</body>
+</html>

@@ -134,7 +134,12 @@ function Aircraft(apiName, element, addmode) {
     const events = {
         onjsclick: ['onclick', Function],
         onjscolspan: ['colspan', String],
-        onjsid: ['id', String]
+        onjsid: ['id', String],
+        onjssrc: ['src', String],
+        "onjs-colspan": ['colspan', String],
+        "onjs-id": ['id', String],
+        "onjs-src": ['src', String],
+        "onjs-class":['class',String]
     };
 
     jsUris.codes = [];
@@ -425,10 +430,7 @@ function Aircraft(apiName, element, addmode) {
                     addmodeOpt(element, f, opt);
                     continue;
                 }
-                if (mode?.value == 'gone') {
-                    continue;
-                }
-                if (mode?.value.startsWith('param')) {
+                if (mode?.value == 'gone' ||mode?.value.startsWith('param')) {
                     continue;
                 }
                 loaderjscode('local', codeNode.textContent);
@@ -454,6 +456,7 @@ function Aircraft(apiName, element, addmode) {
                 newNode = codeNode.cloneNode();
                 addmodeOpt(element, newNode, runstate);
                 let textContent = codeNode.textContent;
+                //only {{}} 1step;
                 let bi = textContent.indexOf('{{');
                 let ei = textContent.lastIndexOf('}}');
                 if (bi < ei && bi != -1 && ei != -1) {
@@ -601,8 +604,3 @@ const filterToolInserJscodes = ['livereload.js?', 'class reloadPlugin', '/framew
 
 const addmodeShift = 'shift';
 const addmodeUnshift = 'unshift';
-
-/**
- * only main
- * */
-const page = {};

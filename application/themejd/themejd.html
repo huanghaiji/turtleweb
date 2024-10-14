@@ -24,10 +24,8 @@
     </ul>
 
     <div class="themejdmain">
-        <section>
-            <img src="./images/stars.png" class="stars" alt="">
-            <img src="./images/mountains_behind.png" class="behind" alt="">
-            <img src="./images/mountains_front.png" class="front" alt="">
+        <section onjs="api.foreach(this, [{ u: './images/stars.png', c: 'stars' }, { u: './images/mountains_behind.png', c: 'behind' }, { u: './images/mountains_front.png' ,c:'front'}], 'imgconf');">
+            <img onjs-class="imgconf.c" alt="" onjs-src="imgconf.u"/>
         </section>
         <div class="main_item_dataui" onjs="api.dataui = this">
             <div class="themejditemwindowcontentlast"></div>
