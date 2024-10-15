@@ -34,7 +34,8 @@
 							<div class="main_item_left">
 								<div onjs="this.classList.add(key)"></div>
 								{{desktop.menuItem[key].title}}
-								<button onjs="this.classList.add(key+'btn');"
+								<button
+										onjs-class="key+'btn'"
 										onjsclick="itemCloseClick(this,key,...arguments)">
 									关闭
 								</button>
