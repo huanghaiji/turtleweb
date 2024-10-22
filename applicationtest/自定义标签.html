@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scal=1.0" />
+    <style>
+        custom-tag{
+            display:inline-block;
+            background-color:#f0f0f0;
+            border:1px solid #ddd;
+            padding: 8px;
+            border-radius:4px;
+            font-size:16px;
+        }
+    </style>
+</head>
+
+<body>
+    <custom-tag>这是一个自定义标签</custom-tag>
+</body>
+
+</html>
+
+<script >
+    if (typeof window.customElements.define === 'function' && typeof HTMLElement === 'function') {
+        class CustomTag extends HTMLElement {
+            constructor() {
+                super();
+            }
+        }
+        window.customElements.define('custom-tag', CustomTag);
+    }
+</script>

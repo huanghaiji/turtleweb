@@ -31,6 +31,10 @@ const desktop={
 		sanjiaoyazi:{
 			title:'三趾',
 			icon:'entry/img/main_item_right.png'
+		},
+		tianqieg: {
+			title: '气候',
+			icon: 'entry/img/main_item_right.png'
 		}
 	},
 	menuOrder:[
@@ -41,6 +45,7 @@ const desktop={
 		'device',
 		'jibing',
 		'huangyuangui',
-		'sanjiaoyazi'
+		'sanjiaoyazi',
+		'tianqieg'
 	]
 }
